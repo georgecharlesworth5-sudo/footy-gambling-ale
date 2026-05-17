@@ -239,7 +239,7 @@ function renderOverview(d){
   const maxRet=Math.max(...lbData.map(x=>x.returns),1);
   const pot=d.bet365Total||Math.max(0,d.totalReturned-d.withdrawals);
   let html=`<div class="sgrid">
-    <div class="sc"><div class="sl">Season Pot</div><div class="sv">${fmt(pot)}</div><div class="ss">Bet365 balance + withdrawn</div></div>
+    <div class="sc"><div class="sl">Season Pot</div><div class="sv">${fmt(pot)}</div></div>
     <div class="sc"><div class="sl">Bets Played</div><div class="sv">${d.betsCount||d.bets.length}</div><div class="ss">of ${(d.betsCount||0)+(d.betsLeft||0)||106} total</div></div>
     <div class="sc"><div class="sl">Season P/L</div><div class="sv ${d.profitTotal>=0?'green':'red'}">${fmt(d.profitTotal,true)}</div><div class="ss">vs stakes paid</div></div>
     <div class="sc"><div class="sl">Predicted Total</div><div class="sv">${d.predicted?fmt(d.predicted):'–'}</div><div class="ss">end of season</div></div>
@@ -338,19 +338,72 @@ function renderAll(d){renderOverview(d);renderThisWeekend();renderPrevWeekends(d
 // ── DATA PROCESSING ───────────────────────────────────────────────────────────
 function processJSON(t){
   const c=t.replace(/^[^\{]+/,'').replace(/\);\s*$/,'');
-  const o=JSON.parse(c);const rows=o.table.rows.map(r=>r.c.map(c=>c?c.v:null));
-  const bets=[],ps={};let tr=0,pr=0,pd=0,bc=0,bl=0,b3=0,wd=0;
+  const o=JSON.parse(c);
+  const rows=o.table.rows.map(r=>r.c.map(c=>c?c.v:null));
+
+  // Column mapping (0-indexed):
+  // col 2 = labels/player names (C)
+  // col 3 = values (D)
+  // col 10 = bet number (K)
+  // col 11 = George, 12 = Jon, 13 = Mattie/Matt, 14 = Proudy, 15 = Steve, 16 = Tyler (L-Q)
+  // col 17 = profit (R)
+
+  const bets=[], ps={};
+  let totalReturned=0, profitTotal=0, predicted=0, betsCount=0, betsLeft=0, bet365Total=0, withdrawals=0;
+
   for(let i=0;i<rows.length;i++){
-    const r=rows[i];const g=v=>{const x=r[v];return x===null||x===undefined?'':String(x).trim();};const gn=v=>pc(r[v]);
-    if(STAT_NAMES.includes(g(1))&&gn(2)>0&&gn(2)<5000&&g(3)!==''&&!isNaN(parseInt(g(3)))){ps[g(1)]={returns:gn(2),profitable:parseInt(g(3))||0,zeros:parseInt(g(4))||0};}
-    if(g(1)==='Total'&&r[2]!==null)tr=gn(2);if(g(1)==='Profit'&&r[2]!==null)pr=gn(2);
-    if(g(4)==='Bets'&&r[5]!==null)bc=parseInt(g(5))||0;if(g(4)==='Bets Left'&&r[5]!==null)bl=parseInt(g(5))||0;
-    if(g(1)==='Predicted'&&g(2)==='Each'){const nr=rows[i+1]||[];pd=pc(nr[1]);}
-    if(g(1)==='Bet365'){const nr=rows[i+1]||[];b3=pc(nr[4]);wd=pc(nr[3]);}
-    const bn=parseInt(g(8));if(!isNaN(bn)&&bn>0&&bn<=106){const hd=PLAYERS.some((_,pi)=>r[9+pi]!==null&&r[9+pi]!==undefined);if(hd)bets.push({bet:bn,George:gn(9),Jon:gn(10),Matt:gn(11),Proudy:gn(12),Steve:gn(13),Tyler:gn(14),profit:gn(15),lucky63:gn(16)});}
+    const r=rows[i];
+    const g=v=>{const x=r[v];return x===null||x===undefined?'':String(x).trim();};
+    const gn=v=>pc(r[v]);
+
+    const label=g(2);
+    const val=gn(3);
+
+    // Player season totals — rows where col C is a player name and col D is their total
+    if(STAT_NAMES.includes(label) && val > 0 && val < 5000){
+      // Look for the stats section (has profitable bets count nearby)
+      // We'll build playerStats from what we can find
+      if(!ps[label]) ps[label]={returns:val, profitable:0, zeros:0};
+    }
+
+    // Summary stats
+    if(label==='Total' && val > 0) totalReturned=val;
+    if(label==='Profit' && val > 0) profitTotal=val;
+    if(label==='Bets' && val > 0) betsCount=Math.round(val);
+    if(label==='Bets Left') betsLeft=Math.round(Math.abs(gn(3)));
+    if(label==='Total prediction' && val > 0) predicted=val;
+    if(label==='Returns' && val > 0 && totalReturned===0) totalReturned=val;
+    if(label==='Joint Bets' && val > 0) bet365Total=val;
+
+    // Bet rows — col K (index 10) has bet number
+    const betNum=r[10];
+    if(typeof betNum==='number' && betNum > 0 && betNum <= 200){
+      const hasData=r[11]!==null||r[12]!==null||r[13]!==null||r[14]!==null||r[15]!==null||r[16]!==null;
+      if(hasData){
+        bets.push({
+          bet:Math.round(betNum),
+          George:gn(11), Jon:gn(12), Matt:gn(13),
+          Proudy:gn(14), Steve:gn(15), Tyler:gn(16),
+          profit:gn(17)
+        });
+      }
+    }
   }
-  return buildData(bets,ps,{totalReturned:tr,profitTotal:pr,predicted:pd,betsCount:bc,betsLeft:bl,bet365Total:b3,withdrawals:wd});
+
+  // If we didn't get individual stats, derive from bet totals
+  PLAYERS.forEach(p=>{
+    const key=p==='Matt'?'Mattie':p;
+    if(!ps[key]){
+      const total=bets.reduce((s,b)=>s+(b[p]||0),0);
+      const wins=bets.filter(b=>b[p]>0).length;
+      const zeros=bets.filter(b=>b[p]===0 && (b.George+b.Jon+b.Matt+b.Proudy+b.Steve+b.Tyler)>0).length;
+      if(total>0) ps[key]={returns:total, profitable:wins, zeros:zeros};
+    }
+  });
+
+  return buildData(bets,ps,{totalReturned,profitTotal,predicted,betsCount,betsLeft,bet365Total,withdrawals});
 }
+
 function buildData(bets,playerStats,stats){
   const allReturns=[];bets.forEach(b=>PLAYERS.forEach(p=>{if(b[p]>0)allReturns.push({player:p,amount:b[p],bet:b.bet});}));allReturns.sort((a,b)=>b.amount-a.amount);
   const weekends=[];for(let i=0;i<bets.length;i+=2)weekends.push({num:Math.ceil((i+1)/2),sat:bets[i]||null,sun:bets[i+1]||null});
