@@ -249,7 +249,7 @@ function renderOverview(d){
   lbData.forEach((p,i)=>{
     const pc2=i===0?'p1':i===1?'p2':i===2?'p3':'po';
     const pct=Math.round((p.returns/maxRet)*100);
-    const pl=p.returns-(p.profitable+p.zeros)*15;
+    const pl=p.returns-(d.betsCount*15);
     const plC=pl>=0?'#2a9d60':'#c0392b';
     html+=`<div class="lbr"><div class="pos ${pc2}">${i+1}</div><div><div class="pname">${p.name}</div><div class="bw"><div class="bf" style="width:${pct}%;background:${pcolor(p.name)}"></div></div></div><div class="rv" style="color:${pcolor(p.name)}">${fmt(p.returns)}</div><div class="pv" style="color:${plC}">${fmt(pl,true)}</div><div class="cv">${p.profitable}</div><div class="cv">${p.zeros}</div></div>`;
   });
@@ -292,12 +292,34 @@ function renderProjection(d){
   const projTotal=d.predicted||(d.totalReturned+avg*left);
   const perPerson=projTotal/6;
   const pct=Math.min(100,Math.round((played/total)*100));
+
+  // Weekends = bets / 2
   const totalWeekends=Math.round(total/2);
-  const projLabels=[],projData=[];
-  for(let w=0;w<=totalWeekends;w++){projLabels.push(`Wk ${w}`);projData.push(parseFloat(((projTotal/totalWeekends)*w).toFixed(2)));}
-  const actualPadded=Array(totalWeekends+1).fill(null);actualPadded[0]=0;
+  const playedWeekends=d.weekends.length;
+
+  // Build cumulative actual returns per weekend
+  const actualPadded=Array(totalWeekends+1).fill(null);
+  actualPadded[0]=0;
   let running=0;
-  d.weekends.forEach((wk,i)=>{const allB=[wk.sat,wk.sun].filter(Boolean);running+=allB.reduce((s,b)=>s+PLAYERS.reduce((a,p)=>a+b[p],0),0);actualPadded[i+1]=parseFloat(running.toFixed(2));});
+  d.weekends.forEach((wk,i)=>{
+    const allB=[wk.sat,wk.sun].filter(Boolean);
+    running+=allB.reduce((s,b)=>s+PLAYERS.reduce((a,p)=>a+b[p],0),0);
+    if(i+1<=totalWeekends) actualPadded[i+1]=parseFloat(running.toFixed(2));
+  });
+  const lastActual=running;
+  const lastWeek=playedWeekends;
+
+  // Projected line: starts at current actual value and extends to projTotal
+  // Only draws from current week to end of season
+  const projData=Array(totalWeekends+1).fill(null);
+  const remainingWeekends=totalWeekends-lastWeek;
+  for(let w=lastWeek;w<=totalWeekends;w++){
+    const frac=(w-lastWeek)/Math.max(remainingWeekends,1);
+    projData[w]=parseFloat((lastActual+(projTotal-lastActual)*frac).toFixed(2));
+  }
+
+  const labels=Array.from({length:totalWeekends+1},(_,i)=>`Wk ${i}`);
+
   let html=`<div class="sgrid">
     <div class="sc"><div class="sl">Bets Remaining</div><div class="sv">${left}</div><div class="ss">of ${total} this season</div></div>
     <div class="sc"><div class="sl">Avg per Bet</div><div class="sv">${fmt(avg)}</div><div class="ss">across all players</div></div>
@@ -314,22 +336,55 @@ function renderProjection(d){
   <div class="card">
     <div class="chart-legend">
       <div class="legend-item"><div style="width:24px;height:3px;background:#1a2236;border-radius:2px;flex-shrink:0;"></div>Actual returns</div>
-      <div class="legend-item"><div style="width:24px;height:3px;flex-shrink:0;background:repeating-linear-gradient(90deg,#c0392b 0,#c0392b 5px,transparent 5px,transparent 9px);"></div>Projected trajectory</div>
+      <div class="legend-item"><div style="width:24px;height:3px;flex-shrink:0;background:repeating-linear-gradient(90deg,#c0392b 0,#c0392b 5px,transparent 5px,transparent 9px);"></div>Projected to end of season</div>
     </div>
     <div style="position:relative;width:100%;height:300px;"><canvas id="projChart"></canvas></div>
-    <div style="margin-top:12px;font-size:11px;color:#6a7a8a;">Projected line: straight trajectory to end-of-season total. Updates on every refresh.</div>
+    <div style="margin-top:12px;font-size:11px;color:#6a7a8a;">Projected line starts from current returns and extends to predicted season total.</div>
   </div>`;
+
   document.getElementById('tab-projection').innerHTML=html;
+
   if(projChart){projChart.destroy();projChart=null;}
   projChart=new Chart(document.getElementById('projChart'),{
     type:'line',
-    data:{labels:projLabels,datasets:[
-      {label:'Actual returns',data:actualPadded,borderColor:'#1a2236',backgroundColor:'rgba(26,34,54,0.08)',borderWidth:2.5,pointBackgroundColor:'#1a2236',pointRadius:ctx=>ctx.dataIndex===0||actualPadded[ctx.dataIndex]===null?0:4,pointHoverRadius:6,fill:true,tension:0.3,spanGaps:false},
-      {label:'Projected',data:projData,borderColor:'#c0392b',borderWidth:2,borderDash:[6,4],pointRadius:0,fill:false,tension:0}
+    data:{labels,datasets:[
+      {
+        label:'Actual returns',
+        data:actualPadded,
+        borderColor:'#1a2236',
+        backgroundColor:'rgba(26,34,54,0.08)',
+        borderWidth:2.5,
+        pointBackgroundColor:'#1a2236',
+        pointRadius:ctx=>actualPadded[ctx.dataIndex]===null?0:4,
+        pointHoverRadius:6,
+        fill:true,
+        tension:0.3,
+        spanGaps:false
+      },
+      {
+        label:'Projected',
+        data:projData,
+        borderColor:'#c0392b',
+        borderWidth:2,
+        borderDash:[6,4],
+        pointRadius:0,
+        fill:false,
+        tension:0,
+        spanGaps:false
+      }
     ]},
-    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{if(ctx.raw===null)return null;return`${ctx.dataset.label}: £${ctx.raw.toFixed(2)}`;}},filter:item=>item.raw!==null}},
-      scales:{x:{grid:{display:false},ticks:{font:{family:'Barlow',size:11},color:'#6a7a8a',maxTicksLimit:10}},y:{grid:{color:'#f0ece6'},border:{display:false},ticks:{callback:v=>'£'+v,font:{family:'Barlow',size:11},color:'#6a7a8a'}}}}
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>{if(ctx.raw===null)return null;return`${ctx.dataset.label}: £${ctx.raw.toFixed(2)}`;}},filter:item=>item.raw!==null}
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{font:{family:'Barlow',size:11},color:'#6a7a8a',maxTicksLimit:12}},
+        y:{grid:{color:'#f0ece6'},border:{display:false},ticks:{callback:v=>'£'+v,font:{family:'Barlow',size:11},color:'#6a7a8a'}}
+      }
+    }
   });
 }
 
@@ -341,74 +396,76 @@ function processJSON(t){
   const o=JSON.parse(c);
   const rows=o.table.rows.map(r=>r.c.map(c=>c?c.v:null));
 
-  // Column mapping (0-indexed) for 2026-27 tab:
-  // col 1 (B) = player names & labels
-  // col 2 (C) = values (returns, totals)
-  // col 3 (D) = profitable bets count
-  // col 4 (E) = secondary labels (Bets, Bets Left, Joint Bets etc.)
-  // col 5 (F) = secondary values
+  // Exact column mapping from raw data inspection:
+  // col 1 (B) = player names / labels
+  // col 2 (C) = numeric values
+  // col 3 (D) = profitable bets (numeric)
+  // col 4 (E) = zeros count (string like "3") OR secondary labels
+  // col 5 (F) = secondary numeric values
   // col 8 (I) = bet number
-  // col 9 (J) = George, col 10 (K) = Jon, col 11 (L) = Matt
-  // col 12 (M) = Proudy, col 13 (N) = Steve, col 14 (O) = Tyler
-  // col 15 (P) = profit, col 16 (Q) = lucky63
+  // col 9 (J)=George, 10(K)=Jon, 11(L)=Matt, 12(M)=Proudy, 13(N)=Steve, 14(O)=Tyler
+  // col 15 (P) = profit per bet, col 16 (Q) = lucky63
 
   const bets=[], ps={};
   let totalReturned=0, profitTotal=0, predicted=0, betsCount=0, betsLeft=0, bet365Total=0, withdrawals=0;
 
   for(let i=0;i<rows.length;i++){
     const r=rows[i];
-    const g=v=>{const x=r[v];return x===null||x===undefined?'':String(x).trim();};
+    const g =v=>{const x=r[v];return x===null||x===undefined?'':String(x).trim();};
     const gn=v=>pc(r[v]);
 
-    const label=g(1);
-    const val=gn(2);
-    const label2=g(4);
-    const val2=gn(5);
+    const b1=g(1); // col B
+    const n2=gn(2); // col C numeric
+    const n3=gn(3); // col D numeric
+    const e4=g(4);  // col E string
+    const n5=gn(5); // col F numeric
 
-    // Season player stats: col B = name, col C = returns, col D = profitable bets, col E = zeros
-    if(STAT_NAMES.includes(label) && val > 0 && val < 5000 && r[3]!==null){
-      ps[label]={returns:val, profitable:Math.round(gn(3))||0, zeros:parseInt(g(4))||0};
+    // Season player stats: col B=name, col C=returns(0-5000), col D=profitable(integer), col E=zeros(string integer)
+    // e.g. "George", 158.33, 5, "3"
+    if(STAT_NAMES.includes(b1) && n2 > 0 && n2 < 2000 && r[3]!==null && !isNaN(n3) && n3 < 50 && /^\d+$/.test(e4)){
+      ps[b1]={returns:n2, profitable:Math.round(n3), zeros:parseInt(e4)||0};
     }
 
-    // Summary stats from col B labels
-    if(label==='Total' && val > 0) totalReturned=val;
-    if(label==='Profit') profitTotal=val;
-    if(label==='Each' && val > 0 && totalReturned > 0 && profitTotal !== 0){
-      // skip — this is "Each" person share
-    }
+    // Summary stats: col B=label, col C=value
+    if(b1==='Total' && n2 > 0 && n2 < 10000) totalReturned=n2;
+    if(b1==='Profit') profitTotal=n2;
 
-    // Secondary labels in col E
-    if(label2==='Bets' && val2 > 0) betsCount=Math.round(val2);
-    if(label2==='Bets Left' && val2 > 0) betsLeft=Math.round(val2);
-    if(label2==='Joint Bets' && val2 > 0) bet365Total=val2;
+    // Secondary stats: col E=label, col F=value
+    if(e4==='Bets' && n5 > 0) betsCount=Math.round(n5);
+    if(e4==='Bets Left' && n5 > 0) betsLeft=Math.round(n5);
+    if(e4==='Joint Bets' && n5 > 0) bet365Total=n5;
 
-    // Predicted — col B = "Predicted" next row has value
-    if(label==='£7,470.55' || (g(1).startsWith('£') && val > 5000 && val < 15000)){
-      predicted=val;
-    }
-
-    // Bet365 row
-    if(label==='Bet365'){
+    // Bet365 balance: col B="Bet365", next row has: col C=withdrawals, col D=total
+    if(b1==='Bet365'){
       const nr=rows[i+1]||[];
       withdrawals=pc(nr[2]);
       bet365Total=pc(nr[3]);
     }
 
-    // Bet rows: col I (index 8) = bet number
+    // Predicted total: col B starts with £ and is large
+    if(b1==='Predicted'){
+      // value is in next row col C
+      const nr=rows[i+1]||[];
+      if(nr && pc(nr[2]) > 1000) predicted=pc(nr[2]);
+    }
+
+    // Bet rows: col I (index 8) = bet number, only rows with actual player data
     const betNum=r[8];
-    if(typeof betNum==='number' && betNum > 0 && betNum <= 106){
-      // Only include if at least one player has data (not just -90 profit rows)
-      const hasPlayerData = r[9]!==null || r[10]!==null || r[11]!==null || r[12]!==null || r[13]!==null || r[14]!==null;
-      if(hasPlayerData){
+    if(typeof betNum==='number' && betNum>0 && betNum<=106){
+      const hasData=r[9]!==null || r[10]!==null || r[11]!==null || r[12]!==null || r[13]!==null || r[14]!==null;
+      if(hasData){
         bets.push({
-          bet: Math.round(betNum),
-          George: gn(9), Jon: gn(10), Matt: gn(11),
-          Proudy: gn(12), Steve: gn(13), Tyler: gn(14),
-          profit: gn(15), lucky63: gn(16)
+          bet:Math.round(betNum),
+          George:gn(9), Jon:gn(10), Matt:gn(11),
+          Proudy:gn(12), Steve:gn(13), Tyler:gn(14),
+          profit:gn(15), lucky63:gn(16)
         });
       }
     }
   }
+
+  // Fallback: derive betsCount from actual bets found
+  if(!betsCount && bets.length) betsCount=bets.length;
 
   return buildData(bets,ps,{totalReturned,profitTotal,predicted,betsCount,betsLeft,bet365Total,withdrawals});
 }
