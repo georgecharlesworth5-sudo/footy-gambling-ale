@@ -224,7 +224,7 @@ function renderThisWeekend(){
     sorted.forEach((s,idx)=>{
       const col=pcolor(s.punter);
       const key=dayLabel+'_'+idx;
-      const saved=localStorage.getItem('result_'+key)||'';;
+      const saved=sharedResults[key]||'';;
       const wb=saved==='W'?'result-btn active-w':'result-btn';
       const pb=saved==='P'?'result-btn active-p':'result-btn';
       const lb=saved==='L'?'result-btn active-l':'result-btn';
@@ -413,19 +413,41 @@ function renderProjection(d){
 }
 
 
-function setResult(key, result){
-  const current = localStorage.getItem('result_'+key);
-  // Toggle off if same button pressed again
-  if(current === result){
-    localStorage.removeItem('result_'+key);
-  } else {
-    localStorage.setItem('result_'+key, result);
-  }
-  // Re-render this weekend to reflect change
-  renderThisWeekend();
+const WORKER_URL='https://misty-sea-0fdb.georgecharlesworth5.workers.dev';
+let sharedResults={};
+
+async function loadResults(){
+  try{
+    const res=await fetch(WORKER_URL+'/results');
+    if(res.ok) sharedResults=await res.json();
+  }catch(e){ sharedResults={}; }
 }
 
-function renderAll(d){renderOverview(d);renderThisWeekend();renderPrevWeekends(d);renderTopBets(d);renderProjection(d);}
+async function setResult(key,result){
+  const current=sharedResults[key]||'';
+  const newResult=current===result?'':result;
+  // Optimistic update
+  if(newResult==='') delete sharedResults[key];
+  else sharedResults[key]=newResult;
+  renderThisWeekend();
+  // Save to KV
+  try{
+    await fetch(WORKER_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({key,result:newResult})
+    });
+  }catch(e){}
+}
+
+async function renderAll(d){
+  await loadResults();
+  renderOverview(d);
+  renderThisWeekend();
+  renderPrevWeekends(d);
+  renderTopBets(d);
+  renderProjection(d);
+}
 
 // ── DATA PROCESSING ───────────────────────────────────────────────────────────
 function processJSON(t){
@@ -529,31 +551,31 @@ function processCSV(rows){
 }
 async function loadSheet(){
   setStatus(true,'Connecting…');
-  // Cloudflare Worker proxy — handles CORS reliably
-  const WORKER_URL='https://misty-sea-0fdb.georgecharlesworth5.workers.dev/';
+  const WORKER_URL='https://misty-sea-0fdb.georgecharlesworth5.workers.dev';
   try{
     const res=await fetch(WORKER_URL,{signal:AbortSignal.timeout(10000)});
     if(res.ok){
       const t=await res.text();
       if(t.includes('setResponse')){
-        const d=processJSON(t);renderAll(d);
+        const d=processJSON(t);
+        await renderAll(d);
         setStatus(true,`Live · updated ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`);
         return;
       }
     }
   }catch(e){}
   setStatus(false,'Could not connect — showing demo data');
-  useDemoData();
+  await useDemoData();
 }
-function useDemoData(){
+async function useDemoData(){
   const ps={George:{returns:158.33,profitable:5,zeros:3},Jon:{returns:336.72,profitable:4,zeros:4},Mattie:{returns:233.54,profitable:3,zeros:2},Proudy:{returns:207.93,profitable:1,zeros:0},Steve:{returns:328.63,profitable:5,zeros:0},Tyler:{returns:245.50,profitable:1,zeros:1}};
   const rb=[{bet:1,George:0,Jon:1.40,Matt:0,Proudy:3.00,Steve:19.96,Tyler:3.00,profit:-62.64,lucky63:0.88},{bet:2,George:2.80,Jon:2.90,Matt:41.75,Proudy:15.00,Steve:1.91,Tyler:15.00,profit:-10.64,lucky63:0},{bet:3,George:0,Jon:7.60,Matt:0,Proudy:15.00,Steve:15.16,Tyler:15.00,profit:-37.24,lucky63:37.12},{bet:4,George:6.50,Jon:0,Matt:16.22,Proudy:16.22,Steve:0.95,Tyler:6.50,profit:-43.61,lucky63:0},{bet:5,George:25.11,Jon:5.59,Matt:4.75,Proudy:15.00,Steve:16.88,Tyler:15.00,profit:-7.67,lucky63:12.50},{bet:6,George:5.00,Jon:43.20,Matt:4.75,Proudy:15.00,Steve:12.46,Tyler:15.00,profit:5.41,lucky63:0},{bet:7,George:2.82,Jon:0,Matt:1.15,Proudy:7.68,Steve:4.15,Tyler:15.00,profit:-59.20,lucky63:4.14},{bet:8,George:25.60,Jon:0,Matt:7.67,Proudy:8.45,Steve:4.85,Tyler:15.00,profit:-28.43,lucky63:0},{bet:9,George:23.40,Jon:0,Matt:1.00,Proudy:15.00,Steve:2.84,Tyler:0,profit:-47.76,lucky63:10.25},{bet:10,George:15.84,Jon:8.70,Matt:5.50,Proudy:9.88,Steve:12.28,Tyler:15.00,profit:-22.80,lucky63:0},{bet:11,George:2.55,Jon:3.10,Matt:9.22,Proudy:15.00,Steve:7.78,Tyler:15.00,profit:-37.35,lucky63:29.58},{bet:12,George:0,Jon:1.10,Matt:9.96,Proudy:15.00,Steve:3.98,Tyler:15.00,profit:-44.96,lucky63:0},{bet:13,George:7.74,Jon:0.90,Matt:6.50,Proudy:8.80,Steve:64.12,Tyler:15.00,profit:13.06,lucky63:13.03},{bet:14,George:0.94,Jon:88.52,Matt:50.47,Proudy:4.50,Steve:7.74,Tyler:9.00,profit:71.17,lucky63:0},{bet:15,George:19.85,Jon:27.93,Matt:3.00,Proudy:3.00,Steve:36.29,Tyler:17.00,profit:17.07,lucky63:9.68},{bet:16,George:11.30,Jon:72.20,Matt:3.75,Proudy:6.20,Steve:0.95,Tyler:15.00,profit:19.40,lucky63:0},{bet:17,George:4.00,Jon:21.28,Matt:5.40,Proudy:15.00,Steve:0.95,Tyler:15.00,profit:-28.37,lucky63:3.67},{bet:18,George:0.84,Jon:46.91,Matt:57.44,Proudy:15.00,Steve:66.85,Tyler:15.00,profit:112.04,lucky63:0},{bet:19,George:4.04,Jon:5.39,Matt:5.01,Proudy:5.20,Steve:48.53,Tyler:15.00,profit:-6.83,lucky63:0}];
   const ar=[];rb.forEach(b=>PLAYERS.forEach(p=>{if(b[p]>0)ar.push({player:p,amount:b[p],bet:b.bet});}));ar.sort((a,b)=>b.amount-a.amount);
   const wk=[];for(let i=0;i<rb.length;i+=2)wk.push({num:Math.ceil((i+1)/2),sat:rb[i]||null,sun:rb[i+1]||null});
-  renderAll({bets:rb,playerStats:ps,allReturns:ar,weekends:wk,totalReturned:1631.50,profitTotal:-272,predicted:7976.22,betsCount:18,betsLeft:88,bet365Total:1491.50,withdrawals:140.00});
+  await renderAll({bets:rb,playerStats:ps,allReturns:ar,weekends:wk,totalReturned:1631.50,profitTotal:-272,predicted:7976.22,betsCount:18,betsLeft:88,bet365Total:1491.50,withdrawals:140.00});
 }
 
-loadSheet();
+(async()=>{ await loadSheet(); })();
 setInterval(loadSheet,5*60*1000);
 </script>
 </body>
