@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Footy, Gambling & Ale</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f4f1ec;color:#1a2236;font-family:'Barlow',sans-serif;}
+.header{background:#1a2236;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100;}
+.logo-wrap{display:flex;align-items:center;gap:16px;}
+.htitle{font-family:'Playfair Display',serif;font-size:22px;color:#fff;line-height:1;}
+.header-right{display:flex;align-items:center;gap:10px;}
+.sbadge{background:#fff;color:#1a2236;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;padding:4px 10px;border-radius:3px;letter-spacing:1px;}
+.reload-btn{background:transparent;border:1px solid #3a4a6a;border-radius:4px;color:#7a8aaa;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;padding:5px 12px;cursor:pointer;transition:all 0.15s;}
+.reload-btn:hover{border-color:#fff;color:#fff;}
+.sdot{width:7px;height:7px;border-radius:50%;background:#4caf7d;display:inline-block;flex-shrink:0;}
+.sdot.err{background:#e05252;}
+.stxt{font-size:11px;color:#7a8aaa;}
+.nav{display:flex;padding:0 24px;border-bottom:2px solid #e8e4dd;background:#fff;overflow-x:auto;scrollbar-width:none;}
+.nav::-webkit-scrollbar{display:none;}
+.nbtn{background:none;border:none;color:#1a2236;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.2px;padding:14px 16px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;text-transform:uppercase;transition:all 0.15s;opacity:0.45;}
+.nbtn:hover{opacity:0.75;}
+.nbtn.active{opacity:1;border-bottom-color:#1a2236;}
+.content{padding:24px;max-width:1000px;margin:0 auto;}
+.tab-content{display:none;}.tab-content.active{display:block;}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:24px;}
+.sc{background:#fff;border:1px solid #e8e4dd;border-radius:8px;padding:16px;border-top:3px solid #1a2236;}
+.sl{font-size:10px;color:#1a2236;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px;font-weight:600;}
+.sv{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:#1a2236;line-height:1;}
+.sv.green{color:#2a9d60;}.sv.red{color:#c0392b;}
+.ss{font-size:11px;color:#6a7a8a;margin-top:4px;}
+.sectitle{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:#1a2236;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #e8e4dd;}
+.lb{background:#fff;border:1px solid #e8e4dd;border-radius:8px;overflow:hidden;margin-bottom:24px;}
+.lbh{display:grid;grid-template-columns:32px 1fr 100px 90px 54px 54px;gap:8px;padding:10px 16px;background:#f9f8f5;border-bottom:1px solid #e8e4dd;font-size:10px;color:#1a2236;letter-spacing:1px;text-transform:uppercase;font-weight:700;}
+.lbr{display:grid;grid-template-columns:32px 1fr 100px 90px 54px 54px;gap:8px;align-items:center;padding:14px 16px;border-bottom:1px solid #f0ece6;transition:background 0.1s;}
+.lbr:last-child{border-bottom:none;}.lbr:hover{background:#faf9f6;}
+.pos{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.p1{background:#1a2236;color:#fff;}.p2{background:#4a5a7a;color:#fff;}.p3{background:#8a9ab8;color:#fff;}.po{background:#f0ece6;color:#6a7a8a;font-size:12px;}
+.pname{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:#1a2236;}
+.bw{height:3px;background:#f0ece6;border-radius:2px;margin-top:6px;overflow:hidden;}
+.bf{height:100%;border-radius:2px;}
+.rv{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;text-align:right;}
+.pv{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;text-align:right;}
+.cv{text-align:center;font-size:13px;color:#4a5a6a;}
+/* LUCKY 15 CARDS */
+.day-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;margin-top:4px;}
+.day-label{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:#1a2236;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;}
+.day-line{flex:1;height:1px;background:#e8e4dd;}
+.day-date{font-size:11px;color:#8a94a6;white-space:nowrap;}
+.l15-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin-bottom:24px;}
+.l15-card{background:#fff;border:1px solid #e8e4dd;border-radius:8px;overflow:hidden;}
+.l15-header{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;}
+.l15-name{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:800;color:#fff;letter-spacing:0.5px;}
+.l15-meta{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:rgba(255,255,255,0.65);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.l15-stake{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.7);}
+.l15-sel{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start;padding:10px 16px;border-bottom:1px solid #f0ece6;}
+.l15-sel:last-child{border-bottom:none;}
+.sel-horse{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:#1a2236;}
+.sel-info{font-size:11px;color:#6a7a8a;margin-top:2px;}
+.sel-right{text-align:right;}
+.sel-odds{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;color:#1a2236;}
+.sel-type{font-size:10px;color:#8a94a6;margin-top:1px;}
+.no-bet-card{background:#f9f8f5;border:1px dashed #d8d4ce;border-radius:8px;padding:28px 16px;text-align:center;}
+.no-bet-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:#b0aaa4;margin-bottom:4px;}
+.no-bet-sub{font-size:12px;color:#c0bbb4;}
+/* PREV WEEKENDS */
+.wblock{background:#fff;border:1px solid #e8e4dd;border-radius:8px;margin-bottom:12px;overflow:hidden;}
+.whead{background:#f9f8f5;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e8e4dd;}
+.wlabel{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:#1a2236;}
+.wday{padding:7px 16px;font-size:10px;color:#1a2236;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:#faf9f6;border-bottom:1px solid #f0ece6;}
+.wgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:#f0ece6;}
+.wcell{background:#fff;padding:10px 6px;text-align:center;}
+.wcn{font-size:10px;color:#1a2236;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+.wcv{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;}
+/* TOP BETS */
+.card{background:#fff;border:1px solid #e8e4dd;border-radius:8px;padding:16px;margin-bottom:16px;}
+.brow{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #f0ece6;gap:10px;}
+.brow:last-child{border-bottom:none;}
+.bnum{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:#6a7a8a;width:22px;flex-shrink:0;}
+.bplayer{font-size:14px;font-weight:500;color:#1a2236;flex:1;}
+.bbetnum{font-size:11px;color:#6a7a8a;flex-shrink:0;}
+.bamount{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;min-width:80px;text-align:right;flex-shrink:0;}
+.chart-legend{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:16px;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#1a2236;font-weight:500;}
+.foot{background:#1a2236;padding:12px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.loading{text-align:center;padding:60px;color:#6a7a8a;font-size:14px;}
+.spin{display:inline-block;width:20px;height:20px;border:2px solid #e8e4dd;border-top-color:#1a2236;border-radius:50%;animation:spin 0.7s linear infinite;margin-bottom:10px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:600px){
+  .header{padding:14px 16px;}.content{padding:16px;}.nav{padding:0 16px;}.foot{padding:10px 16px;}
+  .htitle{font-size:17px;}
+  .lbh,.lbr{grid-template-columns:26px 1fr 85px 72px;}
+  .lbh>*:nth-child(5),.lbh>*:nth-child(6),.lbr>*:nth-child(5),.lbr>*:nth-child(6){display:none;}
+  .wgrid{grid-template-columns:repeat(3,1fr);}
+  .sgrid{grid-template-columns:repeat(2,1fr);}
+  .l15-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-wrap">
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+      <circle cx="28" cy="28" r="26.5" fill="#0f1628" stroke="#fff" stroke-width="1.8"/>
+      <circle cx="28" cy="28" r="21.5" fill="none" stroke="#fff" stroke-width="0.6" stroke-opacity="0.3"/>
+      <text x="30" y="33" font-family="Barlow Condensed, sans-serif" font-weight="800" font-size="16" fill="#fff" text-anchor="middle" letter-spacing="3">FGA</text>
+    </svg>
+    <div class="htitle">Footy, Gambling &amp; Ale</div>
+  </div>
+  <div class="header-right">
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span class="sdot" id="sdot"></span>
+      <span class="stxt" id="stxt">Connecting…</span>
+    </div>
+    <div class="sbadge">2026–27</div>
+    <button class="reload-btn" onclick="loadSheet()">⟳ Refresh</button>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nbtn active" onclick="switchTab('overview',this)">Overview</button>
+  <button class="nbtn" onclick="switchTab('thisweekend',this)">This Weekend</button>
+  <button class="nbtn" onclick="switchTab('prevweekends',this)">Previous Weekends</button>
+  <button class="nbtn" onclick="switchTab('topbets',this)">Top Bets</button>
+  <button class="nbtn" onclick="switchTab('projection',this)">Projection</button>
+</div>
+
+<div class="content">
+  <div id="tab-overview" class="tab-content active"><div class="loading"><div class="spin"></div><br>Connecting to Google Sheets…</div></div>
+  <div id="tab-thisweekend" class="tab-content"></div>
+  <div id="tab-prevweekends" class="tab-content"></div>
+  <div id="tab-topbets" class="tab-content"></div>
+  <div id="tab-projection" class="tab-content"></div>
+</div>
+
+<div class="foot">
+  <span class="sdot" id="sdot2"></span>
+  <span class="stxt" id="stxt2" style="font-size:11px;color:#7a8aaa;">Loading…</span>
+</div>
+
+<script>
+const SHEET_ID='1iz1a_uA9n5d_psauCN0IC_4oc6KiQ-RR';
+const PLAYERS=['George','Jon','Matt','Proudy','Steve','Tyler'];
+const PCOLORS=['#1a2236','#2e5fa3','#2a9d60','#c0392b','#7b5ea7','#d4860a'];
+const STAT_NAMES=['George','Jon','Mattie','Proudy','Steve','Tyler'];
+
+// ── THIS WEEKEND ─────────────────────────────────────────────────────────────
+// To update each week: replace selections below with new betslip data
+// Set hasResults:true once the weekend is over and sheet is updated
+const THIS_WEEKEND={
+  weekLabel:'Weekend 10 — Sun 17 May 2026',
+  hasResults:false,
+  saturday:[
+    // Saturday bets — add when provided
+  ],
+  sunday:[
+    {
+      punter:'George',
+      type:'15 × £0.50 E/W Lucky 15',
+      selections:[
+        {horse:'Space Bear',        time:'15:50',track:'Ripon',    race:'Race 4',odds:'5.50'},
+        {horse:'Rupert The Prince', time:'14:17',track:'Ripon',    race:'Race 1',odds:'5.50'},
+        {horse:'Cawthorne Cracker', time:'15:05',track:'Stratford',race:'Race 2',odds:'3.75'},
+        {horse:'Marcellinus',       time:'16:15',track:'Hamilton', race:'Race 2',odds:'4.50'},
+      ]
+    },
+    {
+      punter:'Jon',
+      type:'15 × £1.00 E/W Lucky 15',
+      selections:[
+        {horse:'Star Prospect', time:'14:56',track:'Naas',race:'Race 3',odds:'1.80'},
+        {horse:'Victorious',    time:'16:26',track:'Naas',race:'Race 6',odds:'1.83'},
+        {horse:'Native Warrior',time:'15:56',track:'Naas',race:'Race 5',odds:'3.00'},
+        {horse:'Solana Beach',  time:'15:26',track:'Naas',race:'Race 4',odds:'3.75'},
+      ]
+    },
+    {
+      punter:'Matt',
+      type:'15 × £0.50 E/W Lucky 15',
+      selections:[
+        {horse:'Alpha Magic', time:'17:15',track:'Hamilton',race:'Race 4',odds:'12.00'},
+        {horse:'King Cuan',   time:'15:56',track:'Naas',   race:'Race 5',odds:'6.00'},
+        {horse:'Havana Anna', time:'16:56',track:'Naas',   race:'Race 7',odds:'4.33'},
+        {horse:'Lady Iman',   time:'17:26',track:'Naas',   race:'Race 8',odds:'6.50'},
+      ]
+    },
+    {punter:'Proudy',noBet:true},
+    {
+      punter:'Steve',
+      type:'15 × £0.50 E/W Lucky 15',
+      selections:[
+        {horse:'Oilisa',           time:'16:50',track:'Ripon',   race:'Race 6',odds:'4.33'},
+        {horse:'Gouken',           time:'16:15',track:'Hamilton',race:'Race 2',odds:'7.50'},
+        {horse:'Jordan Electrics', time:'17:15',track:'Hamilton',race:'Race 4',odds:'4.33'},
+        {horse:'Solana Beach',     time:'15:26',track:'Naas',   race:'Race 4',odds:'3.75'},
+      ]
+    },
+    {punter:'Tyler',noBet:true},
+  ]
+};
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function pcolor(n){const x=n==='Mattie'?'Matt':n;const i=PLAYERS.indexOf(x);return i>=0?PCOLORS[i]:'#6a7a8a';}
+function fmt(v,sign=false){const abs=Math.abs(v);const str='£'+abs.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});if(sign)return(v<0?'-':v>0?'+':'')+str;return(v<0?'-':'')+str;}
+function pc(s){if(s===null||s===undefined)return 0;if(typeof s==='number')return s;const n=parseFloat(String(s).replace(/[^0-9.\-]/g,''));return isNaN(n)?0:n;}
+function setStatus(ok,msg){['sdot','sdot2'].forEach(id=>{document.getElementById(id).className='sdot'+(ok?'':' err');});['stxt','stxt2'].forEach(id=>{document.getElementById(id).textContent=msg;});}
+function switchTab(tab,btn){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+tab).classList.add('active');btn.classList.add('active');}
+
+// ── RENDER THIS WEEKEND ───────────────────────────────────────────────────────
+function renderThisWeekend(){
+  const tw=THIS_WEEKEND;
+  function daySection(bets,dayLabel,dateStr){
+    if(!bets||!bets.length)return'';
+    let h=`<div class="day-header"><div class="day-label">${dayLabel}</div><div class="day-line"></div><div class="day-date">${dateStr}</div></div><div class="l15-grid">`;
+    bets.forEach(bet=>{
+      const col=pcolor(bet.punter);
+      if(bet.noBet){h+=`<div class="no-bet-card"><div class="no-bet-name">${bet.punter}</div><div class="no-bet-sub">No bet this weekend</div></div>`;return;}
+      const sorted=[...bet.selections].sort((a,b)=>a.time.localeCompare(b.time));
+      h+=`<div class="l15-card"><div class="l15-header" style="background:${col}"><div><div class="l15-name">${bet.punter}</div><div class="l15-meta">${bet.type}</div></div><div class="l15-stake">£15 stake</div></div>`;
+      sorted.forEach(s=>{h+=`<div class="l15-sel"><div><div class="sel-horse">${s.horse}</div><div class="sel-info">${s.time} · ${s.track} · ${s.race}</div></div><div class="sel-right"><div class="sel-odds">${s.odds}</div><div class="sel-type">E/W</div></div></div>`;});
+      h+=`</div>`;
+    });
+    return h+'</div>';
+  }
+
+  const statusBadge=tw.hasResults
+    ?'<span style="background:#d4edda;color:#155724;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;padding:3px 10px;border-radius:3px;">RESULTS IN</span>'
+    :'<span style="background:#fff3cd;color:#856404;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;padding:3px 10px;border-radius:3px;">PENDING</span>';
+
+  let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:8px;">
+    <div class="sectitle" style="margin:0;border:none;padding:0;">${tw.weekLabel}</div>${statusBadge}</div>`;
+  html+=daySection(tw.saturday,'Saturday','Sat 16 May');
+  html+=daySection(tw.sunday,'Sunday','Sun 17 May');
+  document.getElementById('tab-thisweekend').innerHTML=html;
+}
+
+// ── RENDER OVERVIEW ───────────────────────────────────────────────────────────
+function renderOverview(d){
+  const lbData=STAT_NAMES.map(n=>{const p=d.playerStats[n]||{returns:0,profitable:0,zeros:0};return{name:n,...p};}).sort((a,b)=>b.returns-a.returns);
+  const maxRet=Math.max(...lbData.map(x=>x.returns),1);
+  const pot=d.bet365Total||Math.max(0,d.totalReturned-d.withdrawals);
+  let html=`<div class="sgrid">
+    <div class="sc"><div class="sl">Season Pot</div><div class="sv">${fmt(pot)}</div><div class="ss">Bet365 balance + withdrawn</div></div>
+    <div class="sc"><div class="sl">Bets Played</div><div class="sv">${d.betsCount||d.bets.length}</div><div class="ss">of ${(d.betsCount||0)+(d.betsLeft||0)||106} total</div></div>
+    <div class="sc"><div class="sl">Season P/L</div><div class="sv ${d.profitTotal>=0?'green':'red'}">${fmt(d.profitTotal,true)}</div><div class="ss">vs stakes paid</div></div>
+    <div class="sc"><div class="sl">Predicted Total</div><div class="sv">${d.predicted?fmt(d.predicted):'–'}</div><div class="ss">end of season</div></div>
+  </div>
+  <div class="sectitle">This Season — 2026/27</div>
+  <div class="lb"><div class="lbh"><span></span><span>Player</span><span style="text-align:right">Returned</span><span style="text-align:right">P/L</span><span style="text-align:center">Wins</span><span style="text-align:center">£0</span></div>`;
+  lbData.forEach((p,i)=>{
+    const pc2=i===0?'p1':i===1?'p2':i===2?'p3':'po';
+    const pct=Math.round((p.returns/maxRet)*100);
+    const pl=p.returns-(p.profitable+p.zeros)*15;
+    const plC=pl>=0?'#2a9d60':'#c0392b';
+    html+=`<div class="lbr"><div class="pos ${pc2}">${i+1}</div><div><div class="pname">${p.name}</div><div class="bw"><div class="bf" style="width:${pct}%;background:${pcolor(p.name)}"></div></div></div><div class="rv" style="color:${pcolor(p.name)}">${fmt(p.returns)}</div><div class="pv" style="color:${plC}">${fmt(pl,true)}</div><div class="cv">${p.profitable}</div><div class="cv">${p.zeros}</div></div>`;
+  });
+  html+='</div>';
+  document.getElementById('tab-overview').innerHTML=html;
+}
+
+// ── RENDER PREV WEEKENDS ──────────────────────────────────────────────────────
+function renderPrevWeekends(d){
+  if(!d.weekends.length){document.getElementById('tab-prevweekends').innerHTML='<div class="loading">No previous weekends yet.</div>';return;}
+  let html='<div class="sectitle">Previous Weekends</div>';
+  [...d.weekends].reverse().forEach(wk=>{
+    const allB=[wk.sat,wk.sun].filter(Boolean);
+    const tot=allB.reduce((s,b)=>s+PLAYERS.reduce((a,p)=>a+b[p],0),0);
+    const prof=tot-allB.length*PLAYERS.length*15;
+    const pC=prof>=0?'#2a9d60':'#c0392b';
+    const rd=(b,label)=>b?`<div class="wday">${label}</div><div class="wgrid">${PLAYERS.map(p=>`<div class="wcell"><div class="wcn">${p==='Matt'?'Mattie':p}</div><div class="wcv" style="color:${b[p]>0?pcolor(p):'#c0bbb4'}">${fmt(b[p])}</div></div>`).join('')}</div>`:'';
+    html+=`<div class="wblock"><div class="whead"><div class="wlabel">Weekend ${wk.num}</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:${pC}">${fmt(prof,true)}</div></div>${rd(wk.sat,'Saturday')}${rd(wk.sun,'Sunday')}</div>`;
+  });
+  document.getElementById('tab-prevweekends').innerHTML=html;
+}
+
+// ── RENDER TOP BETS ───────────────────────────────────────────────────────────
+function renderTopBets(d){
+  const top10=d.allReturns.slice(0,10);
+  let html='<div class="sectitle">Top 10 Returns This Season</div><div class="card">';
+  if(!top10.length)html+='<div style="color:#6a7a8a;font-size:13px;">No bets yet.</div>';
+  else top10.forEach((b,i)=>{const m=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';html+=`<div class="brow"><div class="bnum" style="color:${i<3?'#1a2236':'#6a7a8a'};font-weight:700;">${i+1}</div><div class="bplayer">${m} ${b.player==='Matt'?'Mattie':b.player}</div><div class="bbetnum">Bet #${b.bet}</div><div class="bamount" style="color:${pcolor(b.player)}">${fmt(b.amount)}</div></div>`;});
+  html+='</div>';
+  document.getElementById('tab-topbets').innerHTML=html;
+}
+
+// ── RENDER PROJECTION ─────────────────────────────────────────────────────────
+let projChart=null;
+function renderProjection(d){
+  const played=d.betsCount||d.bets.length;
+  const left=d.betsLeft||(106-played);
+  const total=played+left||106;
+  const avg=played>0?d.totalReturned/played:0;
+  const projTotal=d.predicted||(d.totalReturned+avg*left);
+  const perPerson=projTotal/6;
+  const pct=Math.min(100,Math.round((played/total)*100));
+  const totalWeekends=Math.round(total/2);
+  const projLabels=[],projData=[];
+  for(let w=0;w<=totalWeekends;w++){projLabels.push(`Wk ${w}`);projData.push(parseFloat(((projTotal/totalWeekends)*w).toFixed(2)));}
+  const actualPadded=Array(totalWeekends+1).fill(null);actualPadded[0]=0;
+  let running=0;
+  d.weekends.forEach((wk,i)=>{const allB=[wk.sat,wk.sun].filter(Boolean);running+=allB.reduce((s,b)=>s+PLAYERS.reduce((a,p)=>a+b[p],0),0);actualPadded[i+1]=parseFloat(running.toFixed(2));});
+  let html=`<div class="sgrid">
+    <div class="sc"><div class="sl">Bets Remaining</div><div class="sv">${left}</div><div class="ss">of ${total} this season</div></div>
+    <div class="sc"><div class="sl">Avg per Bet</div><div class="sv">${fmt(avg)}</div><div class="ss">across all players</div></div>
+    <div class="sc"><div class="sl">Projected Total</div><div class="sv">${fmt(projTotal)}</div><div class="ss">end of season</div></div>
+    <div class="sc"><div class="sl">Per Person</div><div class="sv green">${fmt(perPerson)}</div><div class="ss">for March trip</div></div>
+  </div>
+  <div class="sectitle">Season Progress</div>
+  <div class="card" style="margin-bottom:16px;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="font-size:12px;color:#1a2236;font-weight:600;">Bets completed</span><span style="font-size:12px;color:#1a2236;font-weight:600;">${played} / ${total}</span></div>
+    <div style="background:#f0ece6;border-radius:4px;height:8px;overflow:hidden;margin-bottom:4px;"><div style="height:100%;width:${pct}%;background:#1a2236;border-radius:4px;"></div></div>
+    <div style="font-size:10px;color:#6a7a8a;text-align:right;">${pct}% of season complete</div>
+  </div>
+  <div class="sectitle">Total Returns — Actual vs Projected</div>
+  <div class="card">
+    <div class="chart-legend">
+      <div class="legend-item"><div style="width:24px;height:3px;background:#1a2236;border-radius:2px;flex-shrink:0;"></div>Actual returns</div>
+      <div class="legend-item"><div style="width:24px;height:3px;flex-shrink:0;background:repeating-linear-gradient(90deg,#c0392b 0,#c0392b 5px,transparent 5px,transparent 9px);"></div>Projected trajectory</div>
+    </div>
+    <div style="position:relative;width:100%;height:300px;"><canvas id="projChart"></canvas></div>
+    <div style="margin-top:12px;font-size:11px;color:#6a7a8a;">Projected line: straight trajectory to end-of-season total. Updates on every refresh.</div>
+  </div>`;
+  document.getElementById('tab-projection').innerHTML=html;
+  if(projChart){projChart.destroy();projChart=null;}
+  projChart=new Chart(document.getElementById('projChart'),{
+    type:'line',
+    data:{labels:projLabels,datasets:[
+      {label:'Actual returns',data:actualPadded,borderColor:'#1a2236',backgroundColor:'rgba(26,34,54,0.08)',borderWidth:2.5,pointBackgroundColor:'#1a2236',pointRadius:ctx=>ctx.dataIndex===0||actualPadded[ctx.dataIndex]===null?0:4,pointHoverRadius:6,fill:true,tension:0.3,spanGaps:false},
+      {label:'Projected',data:projData,borderColor:'#c0392b',borderWidth:2,borderDash:[6,4],pointRadius:0,fill:false,tension:0}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{if(ctx.raw===null)return null;return`${ctx.dataset.label}: £${ctx.raw.toFixed(2)}`;}},filter:item=>item.raw!==null}},
+      scales:{x:{grid:{display:false},ticks:{font:{family:'Barlow',size:11},color:'#6a7a8a',maxTicksLimit:10}},y:{grid:{color:'#f0ece6'},border:{display:false},ticks:{callback:v=>'£'+v,font:{family:'Barlow',size:11},color:'#6a7a8a'}}}}
+  });
+}
+
+function renderAll(d){renderOverview(d);renderThisWeekend();renderPrevWeekends(d);renderTopBets(d);renderProjection(d);}
+
+// ── DATA PROCESSING ───────────────────────────────────────────────────────────
+function processJSON(t){
+  const c=t.replace(/^[^\{]+/,'').replace(/\);\s*$/,'');
+  const o=JSON.parse(c);const rows=o.table.rows.map(r=>r.c.map(c=>c?c.v:null));
+  const bets=[],ps={};let tr=0,pr=0,pd=0,bc=0,bl=0,b3=0,wd=0;
+  for(let i=0;i<rows.length;i++){
+    const r=rows[i];const g=v=>{const x=r[v];return x===null||x===undefined?'':String(x).trim();};const gn=v=>pc(r[v]);
+    if(STAT_NAMES.includes(g(1))&&gn(2)>0&&gn(2)<5000&&g(3)!==''&&!isNaN(parseInt(g(3)))){ps[g(1)]={returns:gn(2),profitable:parseInt(g(3))||0,zeros:parseInt(g(4))||0};}
+    if(g(1)==='Total'&&r[2]!==null)tr=gn(2);if(g(1)==='Profit'&&r[2]!==null)pr=gn(2);
+    if(g(4)==='Bets'&&r[5]!==null)bc=parseInt(g(5))||0;if(g(4)==='Bets Left'&&r[5]!==null)bl=parseInt(g(5))||0;
+    if(g(1)==='Predicted'&&g(2)==='Each'){const nr=rows[i+1]||[];pd=pc(nr[1]);}
+    if(g(1)==='Bet365'){const nr=rows[i+1]||[];b3=pc(nr[4]);wd=pc(nr[3]);}
+    const bn=parseInt(g(8));if(!isNaN(bn)&&bn>0&&bn<=106){const hd=PLAYERS.some((_,pi)=>r[9+pi]!==null&&r[9+pi]!==undefined);if(hd)bets.push({bet:bn,George:gn(9),Jon:gn(10),Matt:gn(11),Proudy:gn(12),Steve:gn(13),Tyler:gn(14),profit:gn(15),lucky63:gn(16)});}
+  }
+  return buildData(bets,ps,{totalReturned:tr,profitTotal:pr,predicted:pd,betsCount:bc,betsLeft:bl,bet365Total:b3,withdrawals:wd});
+}
+function buildData(bets,playerStats,stats){
+  const allReturns=[];bets.forEach(b=>PLAYERS.forEach(p=>{if(b[p]>0)allReturns.push({player:p,amount:b[p],bet:b.bet});}));allReturns.sort((a,b)=>b.amount-a.amount);
+  const weekends=[];for(let i=0;i<bets.length;i+=2)weekends.push({num:Math.ceil((i+1)/2),sat:bets[i]||null,sun:bets[i+1]||null});
+  return{bets,playerStats,allReturns,weekends,...stats};
+}
+function parseCSV(t){const rows=[];for(const l of t.split('\n')){const c=[];let cur='',q=false;for(const ch of l){if(ch==='"'){q=!q;}else if(ch===','&&!q){c.push(cur.trim());cur='';}else cur+=ch;}c.push(cur.trim());rows.push(c);}return rows;}
+function processCSV(rows){
+  const bets=[],ps={};let tr=0,pr=0,pd=0,bc=0,bl=0,b3=0,wd=0;
+  for(let i=0;i<rows.length;i++){const r=rows[i];const b=v=>(r[v]||'').trim();
+    if(STAT_NAMES.includes(b(1))&&pc(b(2))>0&&pc(b(2))<5000&&b(3)!==''&&!isNaN(parseInt(b(3)))){ps[b(1)]={returns:pc(b(2)),profitable:parseInt(b(3))||0,zeros:parseInt(b(4))||0};}
+    if(b(1)==='Total'&&b(2))tr=pc(b(2));if(b(1)==='Profit'&&b(2))pr=pc(b(2));
+    if(b(4)==='Bets'&&b(5))bc=parseInt(b(5))||0;if(b(4)==='Bets Left'&&b(5))bl=parseInt(b(5))||0;
+    if(b(1)==='Predicted'&&b(2)==='Each'){const nr=rows[i+1]||[];pd=pc(nr[1]||'');}
+    if(b(1)==='Bet365'){const nr=rows[i+1]||[];b3=pc(nr[4]||'');wd=pc(nr[3]||'');}
+    const bn=parseInt(b(8));if(!isNaN(bn)&&bn>0&&bn<=106){const hd=PLAYERS.some((_,pi)=>(r[9+pi]||'').trim()!=='');if(hd)bets.push({bet:bn,George:pc(r[9]),Jon:pc(r[10]),Matt:pc(r[11]),Proudy:pc(r[12]),Steve:pc(r[13]),Tyler:pc(r[14]),profit:pc(r[15]),lucky63:pc(r[16])});}
+  }
+  return buildData(bets,ps,{totalReturned:tr,profitTotal:pr,predicted:pd,betsCount:bc,betsLeft:bl,bet365Total:b3,withdrawals:wd});
+}
+async function loadSheet(){
+  setStatus(true,'Connecting…');
+  try{const res=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`);if(res.ok){const t=await res.text();if(t.includes('setResponse')){const d=processJSON(t);renderAll(d);setStatus(true,`Live · updated ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`);return;}}}catch(e){}
+  const cu=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/pub?output=csv`;
+  for(const px of[u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,u=>`https://corsproxy.io/?${encodeURIComponent(u)}`]){try{const r=await fetch(px(cu),{signal:AbortSignal.timeout(8000)});if(r.ok){const t=await r.text();if(!t.includes('<!DOCTYPE')&&t.includes(',')){const d=processCSV(parseCSV(t));renderAll(d);setStatus(true,`Live · updated ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`);return;}}}catch(e){}}
+  setStatus(false,'Could not connect — showing demo data');useDemoData();
+}
+function useDemoData(){
+  const ps={George:{returns:158.33,profitable:5,zeros:3},Jon:{returns:336.72,profitable:4,zeros:4},Mattie:{returns:233.54,profitable:3,zeros:2},Proudy:{returns:207.93,profitable:1,zeros:0},Steve:{returns:328.63,profitable:5,zeros:0},Tyler:{returns:245.50,profitable:1,zeros:1}};
+  const rb=[{bet:1,George:0,Jon:1.40,Matt:0,Proudy:3.00,Steve:19.96,Tyler:3.00,profit:-62.64,lucky63:0.88},{bet:2,George:2.80,Jon:2.90,Matt:41.75,Proudy:15.00,Steve:1.91,Tyler:15.00,profit:-10.64,lucky63:0},{bet:3,George:0,Jon:7.60,Matt:0,Proudy:15.00,Steve:15.16,Tyler:15.00,profit:-37.24,lucky63:37.12},{bet:4,George:6.50,Jon:0,Matt:16.22,Proudy:16.22,Steve:0.95,Tyler:6.50,profit:-43.61,lucky63:0},{bet:5,George:25.11,Jon:5.59,Matt:4.75,Proudy:15.00,Steve:16.88,Tyler:15.00,profit:-7.67,lucky63:12.50},{bet:6,George:5.00,Jon:43.20,Matt:4.75,Proudy:15.00,Steve:12.46,Tyler:15.00,profit:5.41,lucky63:0},{bet:7,George:2.82,Jon:0,Matt:1.15,Proudy:7.68,Steve:4.15,Tyler:15.00,profit:-59.20,lucky63:4.14},{bet:8,George:25.60,Jon:0,Matt:7.67,Proudy:8.45,Steve:4.85,Tyler:15.00,profit:-28.43,lucky63:0},{bet:9,George:23.40,Jon:0,Matt:1.00,Proudy:15.00,Steve:2.84,Tyler:0,profit:-47.76,lucky63:10.25},{bet:10,George:15.84,Jon:8.70,Matt:5.50,Proudy:9.88,Steve:12.28,Tyler:15.00,profit:-22.80,lucky63:0},{bet:11,George:2.55,Jon:3.10,Matt:9.22,Proudy:15.00,Steve:7.78,Tyler:15.00,profit:-37.35,lucky63:29.58},{bet:12,George:0,Jon:1.10,Matt:9.96,Proudy:15.00,Steve:3.98,Tyler:15.00,profit:-44.96,lucky63:0},{bet:13,George:7.74,Jon:0.90,Matt:6.50,Proudy:8.80,Steve:64.12,Tyler:15.00,profit:13.06,lucky63:13.03},{bet:14,George:0.94,Jon:88.52,Matt:50.47,Proudy:4.50,Steve:7.74,Tyler:9.00,profit:71.17,lucky63:0},{bet:15,George:19.85,Jon:27.93,Matt:3.00,Proudy:3.00,Steve:36.29,Tyler:17.00,profit:17.07,lucky63:9.68},{bet:16,George:11.30,Jon:72.20,Matt:3.75,Proudy:6.20,Steve:0.95,Tyler:15.00,profit:19.40,lucky63:0},{bet:17,George:4.00,Jon:21.28,Matt:5.40,Proudy:15.00,Steve:0.95,Tyler:15.00,profit:-28.37,lucky63:3.67},{bet:18,George:0.84,Jon:46.91,Matt:57.44,Proudy:15.00,Steve:66.85,Tyler:15.00,profit:112.04,lucky63:0},{bet:19,George:4.04,Jon:5.39,Matt:5.01,Proudy:5.20,Steve:48.53,Tyler:15.00,profit:-6.83,lucky63:0}];
+  const ar=[];rb.forEach(b=>PLAYERS.forEach(p=>{if(b[p]>0)ar.push({player:p,amount:b[p],bet:b.bet});}));ar.sort((a,b)=>b.amount-a.amount);
+  const wk=[];for(let i=0;i<rb.length;i+=2)wk.push({num:Math.ceil((i+1)/2),sat:rb[i]||null,sun:rb[i+1]||null});
+  renderAll({bets:rb,playerStats:ps,allReturns:ar,weekends:wk,totalReturned:1631.50,profitTotal:-272,predicted:7976.22,betsCount:18,betsLeft:88,bet365Total:1491.50,withdrawals:140.00});
+}
+
+loadSheet();
+setInterval(loadSheet,5*60*1000);
+</script>
+</body>
+</html>
