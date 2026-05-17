@@ -87,6 +87,7 @@ body{background:#f4f1ec;color:#1a2236;font-family:'Barlow',sans-serif;}
 .active-w{background:#d4edda !important;border-color:#2a9d60 !important;color:#155724 !important;}
 .active-p{background:#fff3cd !important;border-color:#d4a017 !important;color:#856404 !important;}
 .active-l{background:#f8d7da !important;border-color:#c0392b !important;color:#721c24 !important;}
+.active-nr{background:#e8e8e8 !important;border-color:#888 !important;color:#444 !important;}
 .race-list-row.won{background:#f0faf4;}
 .race-list-row.placed{background:#fffdf0;}
 .race-list-row.lost{background:#fdf5f5;}
@@ -122,6 +123,14 @@ body{background:#f4f1ec;color:#1a2236;font-family:'Barlow',sans-serif;}
   .wgrid{grid-template-columns:repeat(3,1fr);}
   .sgrid{grid-template-columns:repeat(2,1fr);}
   .l15-grid{grid-template-columns:1fr;}
+  .race-list-header{display:none;}
+  .race-list-row{grid-template-columns:58px 1fr 48px 72px 80px !important;gap:6px;padding:10px 12px;}
+  .rl-track{display:none;}
+  .rl-horse{font-size:14px;}
+  .rl-time{font-size:14px;}
+  .rl-odds{font-size:15px;}
+  .result-btn{padding:4px 6px;font-size:11px;}
+  .punter-chip{font-size:11px;padding:2px 5px;}
 }
 </style>
 </head>
@@ -228,6 +237,7 @@ function renderThisWeekend(){
       const wb=saved==='W'?'result-btn active-w':'result-btn';
       const pb=saved==='P'?'result-btn active-p':'result-btn';
       const lb=saved==='L'?'result-btn active-l':'result-btn';
+      const nrb=saved==='NR'?'result-btn active-nr':'result-btn';
       h+=`<div class="race-list-row" id="row-${key}">
         <div><div class="rl-time">${s.time}</div><div class="rl-race">${s.race}</div></div>
         <div class="rl-horse">${s.horse}</div>
@@ -238,6 +248,7 @@ function renderThisWeekend(){
           <button class="${wb}" onclick="setResult('${key}','W')">W</button>
           <button class="${pb}" onclick="setResult('${key}','P')">P</button>
           <button class="${lb}" onclick="setResult('${key}','L')">L</button>
+          <button class="${nrb}" onclick="setResult('${key}','NR')">NR</button>
         </div>
       </div>`;
     });
