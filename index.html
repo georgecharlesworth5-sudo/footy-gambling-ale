@@ -442,11 +442,13 @@ function processJSON(t){
       bet365Total=pc(nr[3]);
     }
 
-    // Predicted total: col B starts with £ and is large
-    if(b1==='Predicted'){
-      // value is in next row col C
-      const nr=rows[i+1]||[];
-      if(nr && pc(nr[2]) > 1000) predicted=pc(nr[2]);
+    // Predicted total: row where col B = "£7,470.55" style string (the predicted pot total)
+    // In the raw data this row has: col B=predicted string, col C=current each, col D=current each value
+    // The total predicted is in col B itself as a formatted string
+    if(b1.startsWith('£') && b1.includes(',') && !b1.includes('1,312') && !b1.includes('1,491')){
+      const stripped=b1.replace(/[£,]/g,'');
+      const parsed=parseFloat(stripped);
+      if(parsed > 5000 && parsed < 20000) predicted=parsed;
     }
 
     // Bet rows: col I (index 8) = bet number, only rows with actual player data
