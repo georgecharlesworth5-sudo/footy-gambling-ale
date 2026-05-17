@@ -238,11 +238,13 @@ function renderOverview(d){
   const lbData=STAT_NAMES.map(n=>{const p=d.playerStats[n]||{returns:0,profitable:0,zeros:0};return{name:n,...p};}).sort((a,b)=>b.returns-a.returns);
   const maxRet=Math.max(...lbData.map(x=>x.returns),1);
   const pot=d.bet365Total||Math.max(0,d.totalReturned-d.withdrawals);
+  const totalBets=(d.betsCount||0)+(d.betsLeft||0)||106;
+  const pct=Math.min(100,Math.round(((d.betsCount||d.bets.length)/totalBets)*100));
   let html=`<div class="sgrid">
     <div class="sc"><div class="sl">Season Pot</div><div class="sv">${fmt(pot)}</div></div>
-<div class="sc"><div class="sl">Bets Placed</div><div class="sv">${d.betsCount||d.bets.length}</div><div class="ss">${pct}% of ${(d.betsCount||0)+(d.betsLeft||0)||106} bets</div></div>    
-<div class="sc"><div class="sl">Season P/L</div><div class="sv ${d.profitTotal>=0?'green':'red'}">${fmt(d.profitTotal,true)}</div><div class="ss"></div></div>
-    <div class="sc"><div class="sl">Predicted Total</div><div class="sv">${d.predicted?fmt(d.predicted):'–'}</div><div class="ss"></div></div>
+    <div class="sc"><div class="sl">Bets Placed</div><div class="sv">${d.betsCount||d.bets.length}</div><div class="ss">${pct}% of ${(d.betsCount||0)+(d.betsLeft||0)||106} bets</div></div>
+    <div class="sc"><div class="sl">Season P/L</div><div class="sv ${d.profitTotal>=0?'green':'red'}">${fmt(d.profitTotal,true)}</div><div class="ss">vs stakes paid</div></div>
+    <div class="sc"><div class="sl">Predicted Total</div><div class="sv">${d.predicted?fmt(d.predicted):'–'}</div><div class="ss">end of season</div></div>
   </div>
   <div class="sectitle">This Season — 2026/27</div>
   <div class="lb"><div class="lbh"><span></span><span>Player</span><span style="text-align:right">Returned</span><span style="text-align:right">P/L</span><span style="text-align:center">Wins</span><span style="text-align:center">£0</span></div>`;
@@ -324,7 +326,7 @@ function renderProjection(d){
     <div class="sc"><div class="sl">Bets Remaining</div><div class="sv">${left}</div><div class="ss">of ${total} this season</div></div>
     <div class="sc"><div class="sl">Avg per Bet</div><div class="sv">${fmt(avg)}</div><div class="ss">across all players</div></div>
     <div class="sc"><div class="sl">Projected Total</div><div class="sv">${fmt(projTotal)}</div><div class="ss">end of season</div></div>
-    <div class="sc"><div class="sl">Per Person</div><div class="sv green">${fmt(perPerson)}</div><div class="ss">for Cheltenham</div></div>
+    <div class="sc"><div class="sl">Per Person</div><div class="sv green">${fmt(perPerson)}</div><div class="ss">for March trip</div></div>
   </div>
   <div class="sectitle">Season Progress</div>
   <div class="card" style="margin-bottom:16px;">
