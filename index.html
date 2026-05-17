@@ -240,9 +240,9 @@ function renderOverview(d){
   const pot=d.bet365Total||Math.max(0,d.totalReturned-d.withdrawals);
   let html=`<div class="sgrid">
     <div class="sc"><div class="sl">Season Pot</div><div class="sv">${fmt(pot)}</div></div>
-    <div class="sc"><div class="sl">Bets Played</div><div class="sv">${d.betsCount||d.bets.length}</div><div class="ss">of ${(d.betsCount||0)+(d.betsLeft||0)||106} total</div></div>
-    <div class="sc"><div class="sl">Season P/L</div><div class="sv ${d.profitTotal>=0?'green':'red'}">${fmt(d.profitTotal,true)}</div><div class="ss">vs stakes paid</div></div>
-    <div class="sc"><div class="sl">Predicted Total</div><div class="sv">${d.predicted?fmt(d.predicted):'–'}</div><div class="ss">end of season</div></div>
+    <div class="sc"><div class="sl">Bets Placed</div><div class="sv">${d.betsCount||d.bets.length}</div><div class="ss">of ${(d.betsCount||0)+(d.betsLeft||0)||106} total</div></div>
+    <div class="sc"><div class="sl">Season P/L</div><div class="sv ${d.profitTotal>=0?'green':'red'}">${fmt(d.profitTotal,true)}</div><div class="ss"></div></div>
+    <div class="sc"><div class="sl">Predicted Total</div><div class="sv">${d.predicted?fmt(d.predicted):'–'}</div><div class="ss"></div></div>
   </div>
   <div class="sectitle">This Season — 2026/27</div>
   <div class="lb"><div class="lbh"><span></span><span>Player</span><span style="text-align:right">Returned</span><span style="text-align:right">P/L</span><span style="text-align:center">Wins</span><span style="text-align:center">£0</span></div>`;
