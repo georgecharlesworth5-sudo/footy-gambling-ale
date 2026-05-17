@@ -341,12 +341,16 @@ function processJSON(t){
   const o=JSON.parse(c);
   const rows=o.table.rows.map(r=>r.c.map(c=>c?c.v:null));
 
-  // Column mapping (0-indexed):
-  // col 2 = labels/player names (C)
-  // col 3 = values (D)
-  // col 10 = bet number (K)
-  // col 11 = George, 12 = Jon, 13 = Mattie/Matt, 14 = Proudy, 15 = Steve, 16 = Tyler (L-Q)
-  // col 17 = profit (R)
+  // Column mapping (0-indexed) for 2026-27 tab:
+  // col 1 (B) = player names & labels
+  // col 2 (C) = values (returns, totals)
+  // col 3 (D) = profitable bets count
+  // col 4 (E) = secondary labels (Bets, Bets Left, Joint Bets etc.)
+  // col 5 (F) = secondary values
+  // col 8 (I) = bet number
+  // col 9 (J) = George, col 10 (K) = Jon, col 11 (L) = Matt
+  // col 12 (M) = Proudy, col 13 (N) = Steve, col 14 (O) = Tyler
+  // col 15 (P) = profit, col 16 (Q) = lucky63
 
   const bets=[], ps={};
   let totalReturned=0, profitTotal=0, predicted=0, betsCount=0, betsLeft=0, bet365Total=0, withdrawals=0;
@@ -356,50 +360,55 @@ function processJSON(t){
     const g=v=>{const x=r[v];return x===null||x===undefined?'':String(x).trim();};
     const gn=v=>pc(r[v]);
 
-    const label=g(2);
-    const val=gn(3);
+    const label=g(1);
+    const val=gn(2);
+    const label2=g(4);
+    const val2=gn(5);
 
-    // Player season totals — rows where col C is a player name and col D is their total
-    if(STAT_NAMES.includes(label) && val > 0 && val < 5000){
-      // Look for the stats section (has profitable bets count nearby)
-      // We'll build playerStats from what we can find
-      if(!ps[label]) ps[label]={returns:val, profitable:0, zeros:0};
+    // Season player stats: col B = name, col C = returns, col D = profitable bets, col E = zeros
+    if(STAT_NAMES.includes(label) && val > 0 && val < 5000 && r[3]!==null){
+      ps[label]={returns:val, profitable:Math.round(gn(3))||0, zeros:parseInt(g(4))||0};
     }
 
-    // Summary stats
+    // Summary stats from col B labels
     if(label==='Total' && val > 0) totalReturned=val;
-    if(label==='Profit' && val > 0) profitTotal=val;
-    if(label==='Bets' && val > 0) betsCount=Math.round(val);
-    if(label==='Bets Left') betsLeft=Math.round(Math.abs(gn(3)));
-    if(label==='Total prediction' && val > 0) predicted=val;
-    if(label==='Returns' && val > 0 && totalReturned===0) totalReturned=val;
-    if(label==='Joint Bets' && val > 0) bet365Total=val;
+    if(label==='Profit') profitTotal=val;
+    if(label==='Each' && val > 0 && totalReturned > 0 && profitTotal !== 0){
+      // skip — this is "Each" person share
+    }
 
-    // Bet rows — col K (index 10) has bet number
-    const betNum=r[10];
-    if(typeof betNum==='number' && betNum > 0 && betNum <= 200){
-      const hasData=r[11]!==null||r[12]!==null||r[13]!==null||r[14]!==null||r[15]!==null||r[16]!==null;
-      if(hasData){
+    // Secondary labels in col E
+    if(label2==='Bets' && val2 > 0) betsCount=Math.round(val2);
+    if(label2==='Bets Left' && val2 > 0) betsLeft=Math.round(val2);
+    if(label2==='Joint Bets' && val2 > 0) bet365Total=val2;
+
+    // Predicted — col B = "Predicted" next row has value
+    if(label==='£7,470.55' || (g(1).startsWith('£') && val > 5000 && val < 15000)){
+      predicted=val;
+    }
+
+    // Bet365 row
+    if(label==='Bet365'){
+      const nr=rows[i+1]||[];
+      withdrawals=pc(nr[2]);
+      bet365Total=pc(nr[3]);
+    }
+
+    // Bet rows: col I (index 8) = bet number
+    const betNum=r[8];
+    if(typeof betNum==='number' && betNum > 0 && betNum <= 106){
+      // Only include if at least one player has data (not just -90 profit rows)
+      const hasPlayerData = r[9]!==null || r[10]!==null || r[11]!==null || r[12]!==null || r[13]!==null || r[14]!==null;
+      if(hasPlayerData){
         bets.push({
-          bet:Math.round(betNum),
-          George:gn(11), Jon:gn(12), Matt:gn(13),
-          Proudy:gn(14), Steve:gn(15), Tyler:gn(16),
-          profit:gn(17)
+          bet: Math.round(betNum),
+          George: gn(9), Jon: gn(10), Matt: gn(11),
+          Proudy: gn(12), Steve: gn(13), Tyler: gn(14),
+          profit: gn(15), lucky63: gn(16)
         });
       }
     }
   }
-
-  // If we didn't get individual stats, derive from bet totals
-  PLAYERS.forEach(p=>{
-    const key=p==='Matt'?'Mattie':p;
-    if(!ps[key]){
-      const total=bets.reduce((s,b)=>s+(b[p]||0),0);
-      const wins=bets.filter(b=>b[p]>0).length;
-      const zeros=bets.filter(b=>b[p]===0 && (b.George+b.Jon+b.Matt+b.Proudy+b.Steve+b.Tyler)>0).length;
-      if(total>0) ps[key]={returns:total, profitable:wins, zeros:zeros};
-    }
-  });
 
   return buildData(bets,ps,{totalReturned,profitTotal,predicted,betsCount,betsLeft,bet365Total,withdrawals});
 }
