@@ -66,6 +66,19 @@ body{background:#f4f1ec;color:#1a2236;font-family:'Barlow',sans-serif;}
 .no-bet-card{background:#f9f8f5;border:1px dashed #d8d4ce;border-radius:8px;padding:28px 16px;text-align:center;}
 .no-bet-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:#b0aaa4;margin-bottom:4px;}
 .no-bet-sub{font-size:12px;color:#c0bbb4;}
+
+.race-list-card{background:#fff;border:1px solid #e8e4dd;border-radius:6px;overflow:hidden;margin-bottom:20px;}
+.race-list-header{display:grid;grid-template-columns:70px 1fr 110px 60px 85px;gap:8px;padding:9px 16px;background:#f9f8f5;border-bottom:1px solid #e8e4dd;font-size:10px;font-weight:700;color:#1a2236;letter-spacing:1px;text-transform:uppercase;}
+.race-list-row{display:grid;grid-template-columns:70px 1fr 110px 60px 85px;gap:8px;align-items:center;padding:11px 16px;border-bottom:1px solid #f0ece6;transition:background 0.1s;}
+.race-list-row:last-child{border-bottom:none;}
+.race-list-row:hover{background:#faf9f6;}
+.rl-time{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:#1a2236;line-height:1.1;}
+.rl-race{font-size:10px;color:#8a94a6;margin-top:2px;}
+.rl-horse{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:#1a2236;}
+.rl-track{font-size:12px;color:#6a7a8a;}
+.rl-odds{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#1a2236;text-align:center;}
+.punter-chip{display:inline-block;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;padding:2px 8px;}
+
 /* PREV WEEKENDS */
 .wblock{background:#fff;border:1px solid #e8e4dd;border-radius:8px;margin-bottom:12px;overflow:hidden;}
 .whead{background:#f9f8f5;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e8e4dd;}
@@ -154,52 +167,28 @@ const STAT_NAMES=['George','Jon','Mattie','Proudy','Steve','Tyler'];
 const THIS_WEEKEND={
   weekLabel:'Weekend 10 — Sun 17 May 2026',
   hasResults:false,
-  saturday:[
-    // Saturday bets — add when provided
-  ],
+  saturday:[],
   sunday:[
-    {
-      punter:'George',
-      type:'15 × £0.50 E/W Lucky 15',
-      selections:[
-        {horse:'Space Bear',        time:'15:50',track:'Ripon',    race:'Race 4',odds:'5.50'},
-        {horse:'Rupert The Prince', time:'14:17',track:'Ripon',    race:'Race 1',odds:'5.50'},
-        {horse:'Cawthorne Cracker', time:'15:05',track:'Stratford',race:'Race 2',odds:'3.75'},
-        {horse:'Marcellinus',       time:'16:15',track:'Hamilton', race:'Race 2',odds:'4.50'},
-      ]
-    },
-    {
-      punter:'Jon',
-      type:'15 × £1.00 E/W Lucky 15',
-      selections:[
-        {horse:'Star Prospect', time:'14:56',track:'Naas',race:'Race 3',odds:'1.80'},
-        {horse:'Victorious',    time:'16:26',track:'Naas',race:'Race 6',odds:'1.83'},
-        {horse:'Native Warrior',time:'15:56',track:'Naas',race:'Race 5',odds:'3.00'},
-        {horse:'Solana Beach',  time:'15:26',track:'Naas',race:'Race 4',odds:'3.75'},
-      ]
-    },
-    {
-      punter:'Matt',
-      type:'15 × £0.50 E/W Lucky 15',
-      selections:[
-        {horse:'Alpha Magic', time:'17:15',track:'Hamilton',race:'Race 4',odds:'12.00'},
-        {horse:'King Cuan',   time:'15:56',track:'Naas',   race:'Race 5',odds:'6.00'},
-        {horse:'Havana Anna', time:'16:56',track:'Naas',   race:'Race 7',odds:'4.33'},
-        {horse:'Lady Iman',   time:'17:26',track:'Naas',   race:'Race 8',odds:'6.50'},
-      ]
-    },
-    {punter:'Proudy',noBet:true},
-    {
-      punter:'Steve',
-      type:'15 × £0.50 E/W Lucky 15',
-      selections:[
-        {horse:'Oilisa',           time:'16:50',track:'Ripon',   race:'Race 6',odds:'4.33'},
-        {horse:'Gouken',           time:'16:15',track:'Hamilton',race:'Race 2',odds:'7.50'},
-        {horse:'Jordan Electrics', time:'17:15',track:'Hamilton',race:'Race 4',odds:'4.33'},
-        {horse:'Solana Beach',     time:'15:26',track:'Naas',   race:'Race 4',odds:'3.75'},
-      ]
-    },
-    {punter:'Tyler',noBet:true},
+    {horse:'Shaftesbury Avenue', time:'13:56',track:'Naas',     race:'Race 1',odds:'2.37', punter:'Proudy'},
+    {horse:'Rupert The Prince',  time:'14:17',track:'Ripon',    race:'Race 1',odds:'5.50', punter:'George'},
+    {horse:'Star Prospect',      time:'14:56',track:'Naas',     race:'Race 3',odds:'1.80', punter:'Jon'},
+    {horse:'Cawthorne Cracker',  time:'15:05',track:'Stratford',race:'Race 2',odds:'3.75', punter:'George'},
+    {horse:'Solana Beach',       time:'15:26',track:'Naas',     race:'Race 4',odds:'3.75', punter:'Jon'},
+    {horse:'Solana Beach',       time:'15:26',track:'Naas',     race:'Race 4',odds:'3.75', punter:'Steve'},
+    {horse:"Jena D'oudairies",   time:'15:35',track:'Stratford',race:'Race 3',odds:'2.37', punter:'Proudy'},
+    {horse:'Space Bear',         time:'15:50',track:'Ripon',    race:'Race 4',odds:'5.50', punter:'George'},
+    {horse:'Native Warrior',     time:'15:56',track:'Naas',     race:'Race 5',odds:'3.00', punter:'Jon'},
+    {horse:'King Cuan',          time:'15:56',track:'Naas',     race:'Race 5',odds:'6.00', punter:'Matt'},
+    {horse:'A Little Something', time:'16:05',track:'Stratford',race:'Race 4',odds:'1.90', punter:'Proudy'},
+    {horse:'Marcellinus',        time:'16:15',track:'Hamilton', race:'Race 2',odds:'4.50', punter:'George'},
+    {horse:'Gouken',             time:'16:15',track:'Hamilton', race:'Race 2',odds:'7.50', punter:'Steve'},
+    {horse:'Victorious',         time:'16:26',track:'Naas',     race:'Race 6',odds:'1.83', punter:'Jon'},
+    {horse:'Oilisa',             time:'16:50',track:'Ripon',    race:'Race 6',odds:'4.33', punter:'Steve'},
+    {horse:'Charles Darwin',     time:'16:56',track:'Naas',     race:'Race 7',odds:'1.83', punter:'Proudy'},
+    {horse:'Havana Anna',        time:'16:56',track:'Naas',     race:'Race 7',odds:'4.33', punter:'Matt'},
+    {horse:'Alpha Magic',        time:'17:15',track:'Hamilton', race:'Race 4',odds:'12.00',punter:'Matt'},
+    {horse:'Jordan Electrics',   time:'17:15',track:'Hamilton', race:'Race 4',odds:'4.33', punter:'Steve'},
+    {horse:'Lady Iman',          time:'17:26',track:'Naas',     race:'Race 8',odds:'6.50', punter:'Matt'},
   ]
 };
 
@@ -210,19 +199,25 @@ function pc(s){if(s===null||s===undefined)return 0;if(typeof s==='number')return
 function setStatus(ok,msg){['sdot','sdot2'].forEach(id=>{document.getElementById(id).className='sdot'+(ok?'':' err');});['stxt','stxt2'].forEach(id=>{document.getElementById(id).textContent=msg;});}
 function switchTab(tab,btn){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+tab).classList.add('active');btn.classList.add('active');}
 
-// ── RENDER THIS WEEKEND ───────────────────────────────────────────────────────
+// ── RENDER THIS WEEKEND ──────────────────────────────────────────────────
 function renderThisWeekend(){
   const tw=THIS_WEEKEND;
-  function daySection(bets,dayLabel,dateStr){
-    if(!bets||!bets.length)return'';
-    let h=`<div class="day-header"><div class="day-label">${dayLabel}</div><div class="day-line"></div><div class="day-date">${dateStr}</div></div><div class="l15-grid">`;
-    bets.forEach(bet=>{
-      const col=pcolor(bet.punter);
-      if(bet.noBet){h+=`<div class="no-bet-card"><div class="no-bet-name">${bet.punter}</div><div class="no-bet-sub">No bet this weekend</div></div>`;return;}
-      const sorted=[...bet.selections].sort((a,b)=>a.time.localeCompare(b.time));
-      h+=`<div class="l15-card"><div class="l15-header" style="background:${col}"><div><div class="l15-name">${bet.punter}</div><div class="l15-meta">${bet.type}</div></div><div class="l15-stake">£15 stake</div></div>`;
-      sorted.forEach(s=>{h+=`<div class="l15-sel"><div><div class="sel-horse">${s.horse}</div><div class="sel-info">${s.time} · ${s.track} · ${s.race}</div></div><div class="sel-right"><div class="sel-odds">${s.odds}</div><div class="sel-type">E/W</div></div></div>`;});
-      h+=`</div>`;
+
+  function raceList(sels,dayLabel,dateStr){
+    if(!sels||!sels.length)return '';
+    const sorted=[...sels].sort((a,b)=>a.time.localeCompare(b.time));
+    let h=`<div class="day-header"><div class="day-label">${dayLabel}</div><div class="day-line"></div><div class="day-date">${dateStr}</div></div>
+    <div class="race-list-card">
+      <div class="race-list-header"><span>Time</span><span>Horse</span><span>Track</span><span style="text-align:center">Odds</span><span>Punter</span></div>`;
+    sorted.forEach(s=>{
+      const col=pcolor(s.punter);
+      h+=`<div class="race-list-row">
+        <div><div class="rl-time">${s.time}</div><div class="rl-race">${s.race}</div></div>
+        <div class="rl-horse">${s.horse}</div>
+        <div class="rl-track">${s.track}</div>
+        <div class="rl-odds">${s.odds}</div>
+        <div><span class="punter-chip" style="background:${col}18;color:${col};border:1px solid ${col}40">${s.punter}</span></div>
+      </div>`;
     });
     return h+'</div>';
   }
@@ -233,8 +228,8 @@ function renderThisWeekend(){
 
   let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:8px;">
     <div class="sectitle" style="margin:0;border:none;padding:0;">${tw.weekLabel}</div>${statusBadge}</div>`;
-  html+=daySection(tw.saturday,'Saturday','Sat 16 May');
-  html+=daySection(tw.sunday,'Sunday','Sun 17 May');
+  html+=raceList(tw.saturday,'Saturday','Sat 16 May');
+  html+=raceList(tw.sunday,'Sunday','Sun 17 May');
   document.getElementById('tab-thisweekend').innerHTML=html;
 }
 
@@ -376,10 +371,49 @@ function processCSV(rows){
 }
 async function loadSheet(){
   setStatus(true,'Connecting…');
-  try{const res=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`);if(res.ok){const t=await res.text();if(t.includes('setResponse')){const d=processJSON(t);renderAll(d);setStatus(true,`Live · updated ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`);return;}}}catch(e){}
-  const cu=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/pub?output=csv`;
-  for(const px of[u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,u=>`https://corsproxy.io/?${encodeURIComponent(u)}`]){try{const r=await fetch(px(cu),{signal:AbortSignal.timeout(8000)});if(r.ok){const t=await r.text();if(!t.includes('<!DOCTYPE')&&t.includes(',')){const d=processCSV(parseCSV(t));renderAll(d);setStatus(true,`Live · updated ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`);return;}}}catch(e){}}
-  setStatus(false,'Could not connect — showing demo data');useDemoData();
+
+  const gvizUrl=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+  const csvUrl=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/pub?output=csv`;
+
+  const proxies=[
+    u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+    u=>`https://corsproxy.io/?${encodeURIComponent(u)}`,
+    u=>`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+    u=>`https://thingproxy.freeboard.io/fetch/${u}`,
+  ];
+
+  // Try gviz JSON through each proxy first (richest data)
+  for(const px of proxies){
+    try{
+      const res=await fetch(px(gvizUrl),{signal:AbortSignal.timeout(8000)});
+      if(res.ok){
+        const t=await res.text();
+        if(t.includes('setResponse')){
+          const d=processJSON(t);renderAll(d);
+          setStatus(true,`Live · updated ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`);
+          return;
+        }
+      }
+    }catch(e){}
+  }
+
+  // Fallback: try CSV through each proxy
+  for(const px of proxies){
+    try{
+      const res=await fetch(px(csvUrl),{signal:AbortSignal.timeout(8000)});
+      if(res.ok){
+        const t=await res.text();
+        if(!t.includes('<!DOCTYPE')&&t.includes(',')){
+          const d=processCSV(parseCSV(t));renderAll(d);
+          setStatus(true,`Live · updated ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`);
+          return;
+        }
+      }
+    }catch(e){}
+  }
+
+  setStatus(false,'Could not connect — showing demo data');
+  useDemoData();
 }
 function useDemoData(){
   const ps={George:{returns:158.33,profitable:5,zeros:3},Jon:{returns:336.72,profitable:4,zeros:4},Mattie:{returns:233.54,profitable:3,zeros:2},Proudy:{returns:207.93,profitable:1,zeros:0},Steve:{returns:328.63,profitable:5,zeros:0},Tyler:{returns:245.50,profitable:1,zeros:1}};
