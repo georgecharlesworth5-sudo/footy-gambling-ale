@@ -68,8 +68,8 @@ body{background:#f4f1ec;color:#1a2236;font-family:'Barlow',sans-serif;}
 .no-bet-sub{font-size:12px;color:#c0bbb4;}
 
 .race-list-card{background:#fff;border:1px solid #e8e4dd;border-radius:6px;overflow:hidden;margin-bottom:20px;}
-.race-list-header{display:grid;grid-template-columns:70px 1fr 110px 60px 85px;gap:8px;padding:9px 16px;background:#f9f8f5;border-bottom:1px solid #e8e4dd;font-size:10px;font-weight:700;color:#1a2236;letter-spacing:1px;text-transform:uppercase;}
-.race-list-row{display:grid;grid-template-columns:70px 1fr 110px 60px 85px;gap:8px;align-items:center;padding:11px 16px;border-bottom:1px solid #f0ece6;transition:background 0.1s;}
+.race-list-header{display:grid;grid-template-columns:70px 1fr 110px 60px 85px 90px;gap:8px;padding:9px 16px;background:#f9f8f5;border-bottom:1px solid #e8e4dd;font-size:10px;font-weight:700;color:#1a2236;letter-spacing:1px;text-transform:uppercase;}
+.race-list-row{display:grid;grid-template-columns:70px 1fr 110px 60px 85px 90px;gap:8px;align-items:center;padding:11px 16px;border-bottom:1px solid #f0ece6;transition:background 0.1s;}
 .race-list-row:last-child{border-bottom:none;}
 .race-list-row:hover{background:#faf9f6;}
 .rl-time{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:#1a2236;line-height:1.1;}
@@ -78,6 +78,18 @@ body{background:#f4f1ec;color:#1a2236;font-family:'Barlow',sans-serif;}
 .rl-track{font-size:12px;color:#6a7a8a;}
 .rl-odds{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#1a2236;text-align:center;}
 .punter-chip{display:inline-block;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;padding:2px 8px;}
+
+
+/* RESULT BUTTONS */
+.result-btns{display:flex;gap:4px;justify-content:center;}
+.result-btn{border:1px solid #e8e4dd;background:#f9f8f5;color:#8a94a6;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;padding:3px 7px;border-radius:3px;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;}
+.result-btn:hover{border-color:#1a2236;color:#1a2236;}
+.active-w{background:#d4edda !important;border-color:#2a9d60 !important;color:#155724 !important;}
+.active-p{background:#fff3cd !important;border-color:#d4a017 !important;color:#856404 !important;}
+.active-l{background:#f8d7da !important;border-color:#c0392b !important;color:#721c24 !important;}
+.race-list-row.won{background:#f0faf4;}
+.race-list-row.placed{background:#fffdf0;}
+.race-list-row.lost{background:#fdf5f5;}
 
 /* PREV WEEKENDS */
 .wblock{background:#fff;border:1px solid #e8e4dd;border-radius:8px;margin-bottom:12px;overflow:hidden;}
@@ -208,15 +220,25 @@ function renderThisWeekend(){
     const sorted=[...sels].sort((a,b)=>a.time.localeCompare(b.time));
     let h=`<div class="day-header"><div class="day-label">${dayLabel}</div><div class="day-line"></div><div class="day-date">${dateStr}</div></div>
     <div class="race-list-card">
-      <div class="race-list-header"><span>Time</span><span>Horse</span><span>Track</span><span style="text-align:center">Odds</span><span>Punter</span></div>`;
-    sorted.forEach(s=>{
+      <div class="race-list-header"><span>Time</span><span>Horse</span><span>Track</span><span style="text-align:center">Odds</span><span>Punter</span><span style="text-align:center">Result</span></div>`;
+    sorted.forEach((s,idx)=>{
       const col=pcolor(s.punter);
-      h+=`<div class="race-list-row">
+      const key=dayLabel+'_'+idx;
+      const saved=localStorage.getItem('result_'+key)||'';;
+      const wb=saved==='W'?'result-btn active-w':'result-btn';
+      const pb=saved==='P'?'result-btn active-p':'result-btn';
+      const lb=saved==='L'?'result-btn active-l':'result-btn';
+      h+=`<div class="race-list-row" id="row-${key}">
         <div><div class="rl-time">${s.time}</div><div class="rl-race">${s.race}</div></div>
         <div class="rl-horse">${s.horse}</div>
         <div class="rl-track">${s.track}</div>
         <div class="rl-odds">${s.odds}</div>
         <div><span class="punter-chip" style="background:${col}18;color:${col};border:1px solid ${col}40">${s.punter}</span></div>
+        <div class="result-btns">
+          <button class="${wb}" onclick="setResult('${key}','W')">W</button>
+          <button class="${pb}" onclick="setResult('${key}','P')">P</button>
+          <button class="${lb}" onclick="setResult('${key}','L')">L</button>
+        </div>
       </div>`;
     });
     return h+'</div>';
@@ -242,7 +264,7 @@ function renderOverview(d){
   const pct=Math.min(100,Math.round(((d.betsCount||d.bets.length)/totalBets)*100));
   let html=`<div class="sgrid">
     <div class="sc"><div class="sl">Season Pot</div><div class="sv">${fmt(pot)}</div></div>
-    <div class="sc"><div class="sl">Bets Placed</div><div class="sv">${d.betsCount||d.bets.length}</div><div class="ss">${pct}% of ${(d.betsCount||0)+(d.betsLeft||0)||106} bets</div></div>
+    <div class="sc"><div class="sl">Bets Played</div><div class="sv">${d.betsCount||d.bets.length}</div><div class="ss">${pct}% of ${(d.betsCount||0)+(d.betsLeft||0)||106} bets</div></div>
     <div class="sc"><div class="sl">Season P/L</div><div class="sv ${d.profitTotal>=0?'green':'red'}">${fmt(d.profitTotal,true)}</div><div class="ss">vs stakes paid</div></div>
     <div class="sc"><div class="sl">Predicted Total</div><div class="sv">${d.predicted?fmt(d.predicted):'–'}</div><div class="ss">end of season</div></div>
   </div>
@@ -388,6 +410,19 @@ function renderProjection(d){
       }
     }
   });
+}
+
+
+function setResult(key, result){
+  const current = localStorage.getItem('result_'+key);
+  // Toggle off if same button pressed again
+  if(current === result){
+    localStorage.removeItem('result_'+key);
+  } else {
+    localStorage.setItem('result_'+key, result);
+  }
+  // Re-render this weekend to reflect change
+  renderThisWeekend();
 }
 
 function renderAll(d){renderOverview(d);renderThisWeekend();renderPrevWeekends(d);renderTopBets(d);renderProjection(d);}
