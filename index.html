@@ -149,7 +149,7 @@ body{background:#f4f1ec;color:#1a2236;font-family:'Barlow',sans-serif;}
 <div class="nav">
   <button class="nbtn active" onclick="switchTab('overview',this)">Overview</button>
   <button class="nbtn" onclick="switchTab('thisweekend',this)">This Weekend</button>
-  <button class="nbtn" onclick="switchTab('prevweekends',this)">Previous Weekends</button>
+  <button class="nbtn" onclick="switchTab('prevweekends',this)">Results</button>
   <button class="nbtn" onclick="switchTab('topbets',this)">Top Bets</button>
   <button class="nbtn" onclick="switchTab('projection',this)">Projection</button>
 </div>
@@ -183,24 +183,24 @@ const THIS_WEEKEND={
   sunday:[
     {horse:'Shaftesbury Avenue', time:'13:56',track:'Naas',     race:'Race 1',odds:'2.37', punter:'Proudy'},
     {horse:'Rupert The Prince',  time:'14:17',track:'Ripon',    race:'Race 1',odds:'5.50', punter:'George'},
-    {horse:'Star Prospect',      time:'14:56',track:'Naas',     race:'Race 3',odds:'1.80', punter:'Matt'},
+    {horse:'Star Prospect',      time:'14:56',track:'Naas',     race:'Race 3',odds:'1.80', punter:'Jon'},
     {horse:'Cawthorne Cracker',  time:'15:05',track:'Stratford',race:'Race 2',odds:'3.75', punter:'George'},
-    {horse:'Solana Beach',       time:'15:26',track:'Naas',     race:'Race 4',odds:'3.75', punter:'Matt'},
+    {horse:'Solana Beach',       time:'15:26',track:'Naas',     race:'Race 4',odds:'3.75', punter:'Jon'},
     {horse:'Solana Beach',       time:'15:26',track:'Naas',     race:'Race 4',odds:'3.75', punter:'Steve'},
     {horse:"Jena D'oudairies",   time:'15:35',track:'Stratford',race:'Race 3',odds:'2.37', punter:'Proudy'},
     {horse:'Space Bear',         time:'15:50',track:'Ripon',    race:'Race 4',odds:'5.50', punter:'George'},
-    {horse:'Native Warrior',     time:'15:56',track:'Naas',     race:'Race 5',odds:'3.00', punter:'Matt'},
-    {horse:'King Cuan',          time:'15:56',track:'Naas',     race:'Race 5',odds:'6.00', punter:'Jon'},
+    {horse:'Native Warrior',     time:'15:56',track:'Naas',     race:'Race 5',odds:'3.00', punter:'Jon'},
+    {horse:'King Cuan',          time:'15:56',track:'Naas',     race:'Race 5',odds:'6.00', punter:'Matt'},
     {horse:'A Little Something', time:'16:05',track:'Stratford',race:'Race 4',odds:'1.90', punter:'Proudy'},
     {horse:'Marcellinus',        time:'16:15',track:'Hamilton', race:'Race 2',odds:'4.50', punter:'George'},
     {horse:'Gouken',             time:'16:15',track:'Hamilton', race:'Race 2',odds:'7.50', punter:'Steve'},
-    {horse:'Victorious',         time:'16:26',track:'Naas',     race:'Race 6',odds:'1.83', punter:'Matt'},
+    {horse:'Victorious',         time:'16:26',track:'Naas',     race:'Race 6',odds:'1.83', punter:'Jon'},
     {horse:'Oilisa',             time:'16:50',track:'Ripon',    race:'Race 6',odds:'4.33', punter:'Steve'},
     {horse:'Charles Darwin',     time:'16:56',track:'Naas',     race:'Race 7',odds:'1.83', punter:'Proudy'},
-    {horse:'Havana Anna',        time:'16:56',track:'Naas',     race:'Race 7',odds:'4.33', punter:'Jon'},
-    {horse:'Alpha Magic',        time:'17:15',track:'Hamilton', race:'Race 4',odds:'12.00',punter:'Jon'},
+    {horse:'Havana Anna',        time:'16:56',track:'Naas',     race:'Race 7',odds:'4.33', punter:'Matt'},
+    {horse:'Alpha Magic',        time:'17:15',track:'Hamilton', race:'Race 4',odds:'12.00',punter:'Matt'},
     {horse:'Jordan Electrics',   time:'17:15',track:'Hamilton', race:'Race 4',odds:'4.33', punter:'Steve'},
-    {horse:'Lady Iman',          time:'17:26',track:'Naas',     race:'Race 8',odds:'6.50', punter:'Jon'},
+    {horse:'Lady Iman',          time:'17:26',track:'Naas',     race:'Race 8',odds:'6.50', punter:'Matt'},
   ]
 };
 
@@ -264,9 +264,9 @@ function renderOverview(d){
   const pct=Math.min(100,Math.round(((d.betsCount||d.bets.length)/totalBets)*100));
   let html=`<div class="sgrid">
     <div class="sc"><div class="sl">Season Pot</div><div class="sv">${fmt(pot)}</div></div>
-    <div class="sc"><div class="sl">Bets Played</div><div class="sv">${d.betsCount||d.bets.length}</div><div class="ss">${pct}% of ${(d.betsCount||0)+(d.betsLeft||0)||106} bets</div></div>
-    <div class="sc"><div class="sl">Season P/L</div><div class="sv ${d.profitTotal>=0?'green':'red'}">${fmt(d.profitTotal,true)}</div><div class="ss">vs stakes paid</div></div>
-    <div class="sc"><div class="sl">Predicted Total</div><div class="sv">${d.predicted?fmt(d.predicted):'–'}</div><div class="ss">end of season</div></div>
+    <div class="sc"><div class="sl">Bets Placed</div><div class="sv">${d.betsCount||d.bets.length}</div><div class="ss">${pct}% of ${(d.betsCount||0)+(d.betsLeft||0)||106} bets</div></div>
+    <div class="sc"><div class="sl">Season P/L</div><div class="sv ${d.profitTotal>=0?'green':'red'}">${fmt(d.profitTotal,true)}</div></div>
+    <div class="sc"><div class="sl">Predicted Total</div><div class="sv">${d.predicted?fmt(d.predicted):'–'}</div></div>
   </div>
   <div class="sectitle">This Season — 2026/27</div>
   <div class="lb"><div class="lbh"><span></span><span>Player</span><span style="text-align:right">Returned</span><span style="text-align:right">P/L</span><span style="text-align:center">Wins</span><span style="text-align:center">£0</span></div>`;
@@ -344,11 +344,10 @@ function renderProjection(d){
 
   const labels=Array.from({length:totalWeekends+1},(_,i)=>`Wk ${i}`);
 
-  let html=`<div class="sgrid">
+  let html=`<div class="sgrid" style="grid-template-columns:repeat(3,1fr);">
     <div class="sc"><div class="sl">Bets Remaining</div><div class="sv">${left}</div><div class="ss">of ${total} this season</div></div>
-    <div class="sc"><div class="sl">Avg per Bet</div><div class="sv">${fmt(avg)}</div><div class="ss">across all players</div></div>
-    <div class="sc"><div class="sl">Projected Total</div><div class="sv">${fmt(projTotal)}</div><div class="ss">end of season</div></div>
-    <div class="sc"><div class="sl">Per Person</div><div class="sv green">${fmt(perPerson)}</div><div class="ss">for March trip</div></div>
+    <div class="sc"><div class="sl">Projected Total</div><div class="sv">${fmt(projTotal)}</div></div>
+    <div class="sc"><div class="sl">Per Person</div><div class="sv green">${fmt(perPerson)}</div><div class="ss">for Cheltenham</div></div>
   </div>
   <div class="sectitle">Season Progress</div>
   <div class="card" style="margin-bottom:16px;">
