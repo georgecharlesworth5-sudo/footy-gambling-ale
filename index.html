@@ -66,7 +66,6 @@ body{background:#f4f1ec;color:#1a2236;font-family:'Barlow',sans-serif;}
 .no-bet-card{background:#f9f8f5;border:1px dashed #d8d4ce;border-radius:8px;padding:28px 16px;text-align:center;}
 .no-bet-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:#b0aaa4;margin-bottom:4px;}
 .no-bet-sub{font-size:12px;color:#c0bbb4;}
-
 .race-list-card{background:#fff;border:1px solid #e8e4dd;border-radius:6px;overflow:hidden;margin-bottom:20px;}
 .race-list-header{display:grid;grid-template-columns:70px 1fr 110px 60px 85px 90px;gap:8px;padding:9px 16px;background:#f9f8f5;border-bottom:1px solid #e8e4dd;font-size:10px;font-weight:700;color:#1a2236;letter-spacing:1px;text-transform:uppercase;}
 .race-list-row{display:grid;grid-template-columns:70px 1fr 110px 60px 85px 90px;gap:8px;align-items:center;padding:11px 16px;border-bottom:1px solid #f0ece6;transition:background 0.1s;}
@@ -78,8 +77,6 @@ body{background:#f4f1ec;color:#1a2236;font-family:'Barlow',sans-serif;}
 .rl-track{font-size:12px;color:#6a7a8a;}
 .rl-odds{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:#1a2236;text-align:center;}
 .punter-chip{display:inline-block;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;padding:2px 8px;}
-
-
 /* RESULT BUTTONS */
 .result-btns{display:flex;gap:4px;justify-content:center;}
 .result-btn{border:1px solid #e8e4dd;background:#f9f8f5;color:#8a94a6;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;padding:3px 7px;border-radius:3px;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;}
@@ -91,7 +88,6 @@ body{background:#f4f1ec;color:#1a2236;font-family:'Barlow',sans-serif;}
 .race-list-row.won{background:#f0faf4;}
 .race-list-row.placed{background:#fffdf0;}
 .race-list-row.lost{background:#fdf5f5;}
-
 /* PREV WEEKENDS */
 .wblock{background:#fff;border:1px solid #e8e4dd;border-radius:8px;margin-bottom:12px;overflow:hidden;}
 .whead{background:#f9f8f5;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e8e4dd;}
@@ -116,66 +112,61 @@ body{background:#f4f1ec;color:#1a2236;font-family:'Barlow',sans-serif;}
 .spin{display:inline-block;width:20px;height:20px;border:2px solid #e8e4dd;border-top-color:#1a2236;border-radius:50%;animation:spin 0.7s linear infinite;margin-bottom:10px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 @media(max-width:600px){
-  .header{padding:14px 16px;}.content{padding:16px;}.nav{padding:0 16px;}.foot{padding:10px 16px;}
-  .htitle{font-size:17px;}
-  .lbh,.lbr{grid-template-columns:26px 1fr 85px 72px;}
-  .lbh>*:nth-child(5),.lbh>*:nth-child(6),.lbr>*:nth-child(5),.lbr>*:nth-child(6){display:none;}
-  .wgrid{grid-template-columns:repeat(3,1fr);}
-  .sgrid{grid-template-columns:repeat(2,1fr);}
-  .l15-grid{grid-template-columns:1fr;}
-  .race-list-header{display:none;}
-  .race-list-row{grid-template-columns:58px 1fr 48px 72px 80px !important;gap:6px;padding:10px 12px;}
-  .rl-track{display:none;}
-  .rl-horse{font-size:14px;}
-  .rl-time{font-size:14px;}
-  .rl-odds{font-size:15px;}
-  .result-btn{padding:4px 6px;font-size:11px;}
-  .punter-chip{font-size:11px;padding:2px 5px;}
+.header{padding:14px 16px;}.content{padding:16px;}.nav{padding:0 16px;}.foot{padding:10px 16px;}
+.htitle{font-size:17px;}
+.lbh,.lbr{grid-template-columns:26px 1fr 85px 72px;}
+.lbh>*:nth-child(5),.lbh>*:nth-child(6),.lbr>*:nth-child(5),.lbr>*:nth-child(6){display:none;}
+.wgrid{grid-template-columns:repeat(3,1fr);}
+.sgrid{grid-template-columns:repeat(2,1fr);}
+.l15-grid{grid-template-columns:1fr;}
+.race-list-header{display:none;}
+.race-list-row{grid-template-columns:58px 1fr 48px 72px 80px !important;gap:6px;padding:10px 12px;}
+.rl-track{display:none;}
+.rl-horse{font-size:14px;}
+.rl-time{font-size:14px;}
+.rl-odds{font-size:15px;}
+.result-btn{padding:4px 6px;font-size:11px;}
+.punter-chip{font-size:11px;padding:2px 5px;}
 }
 </style>
 </head>
 <body>
-
 <div class="header">
-  <div class="logo-wrap">
-    <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-      <circle cx="28" cy="28" r="26.5" fill="#0f1628" stroke="#fff" stroke-width="1.8"/>
-      <circle cx="28" cy="28" r="21.5" fill="none" stroke="#fff" stroke-width="0.6" stroke-opacity="0.3"/>
-      <text x="30" y="33" font-family="Barlow Condensed, sans-serif" font-weight="800" font-size="16" fill="#fff" text-anchor="middle" letter-spacing="3">FGA</text>
-    </svg>
-    <div class="htitle">Footy, Gambling &amp; Ale</div>
-  </div>
-  <div class="header-right">
-    <div style="display:flex;align-items:center;gap:6px;">
-      <span class="sdot" id="sdot"></span>
-      <span class="stxt" id="stxt">Connecting…</span>
-    </div>
-    <div class="sbadge">2026–27</div>
-    <button class="reload-btn" onclick="loadSheet()">⟳ Refresh</button>
-  </div>
+<div class="logo-wrap">
+<svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+<circle cx="28" cy="28" r="26.5" fill="#0f1628" stroke="#fff" stroke-width="1.8"/>
+<circle cx="28" cy="28" r="21.5" fill="none" stroke="#fff" stroke-width="0.6" stroke-opacity="0.3"/>
+<text x="30" y="33" font-family="Barlow Condensed, sans-serif" font-weight="800" font-size="16" fill="#fff" text-anchor="middle" letter-spacing="3">FGA</text>
+</svg>
+<div class="htitle">Footy, Gambling &amp; Ale</div>
 </div>
-
+<div class="header-right">
+<div style="display:flex;align-items:center;gap:6px;">
+<span class="sdot" id="sdot"></span>
+<span class="stxt" id="stxt">Connecting…</span>
+</div>
+<div class="sbadge">2026–27</div>
+<button class="reload-btn" onclick="loadSheet()">⟳ Refresh</button>
+</div>
+</div>
 <div class="nav">
-  <button class="nbtn active" onclick="switchTab('overview',this)">Overview</button>
-  <button class="nbtn" onclick="switchTab('thisweekend',this)">This Weekend</button>
-  <button class="nbtn" onclick="switchTab('prevweekends',this)">Results</button>
-  <button class="nbtn" onclick="switchTab('topbets',this)">Top Bets</button>
-  <button class="nbtn" onclick="switchTab('projection',this)">Projection</button>
+<button class="nbtn active" onclick="switchTab('overview',this)">Overview</button>
+<button class="nbtn" onclick="switchTab('thisweekend',this)">This Weekend</button>
+<button class="nbtn" onclick="switchTab('prevweekends',this)">Results</button>
+<button class="nbtn" onclick="switchTab('topbets',this)">Top Bets</button>
+<button class="nbtn" onclick="switchTab('projection',this)">Projection</button>
 </div>
-
 <div class="content">
-  <div id="tab-overview" class="tab-content active"><div class="loading"><div class="spin"></div><br>Connecting to Google Sheets…</div></div>
-  <div id="tab-thisweekend" class="tab-content"></div>
-  <div id="tab-prevweekends" class="tab-content"></div>
-  <div id="tab-topbets" class="tab-content"></div>
-  <div id="tab-projection" class="tab-content"></div>
+<div id="tab-overview" class="tab-content active"><div class="loading"><div class="spin"></div><br>Connecting to Google Sheets…</div></div>
+<div id="tab-thisweekend" class="tab-content"></div>
+<div id="tab-prevweekends" class="tab-content"></div>
+<div id="tab-topbets" class="tab-content"></div>
+<div id="tab-projection" class="tab-content"></div>
 </div>
-
 <div class="foot">
-  <span class="sdot" id="sdot2"></span>
-  <span class="stxt" id="stxt2" style="font-size:11px;color:#7a8aaa;">Loading…</span>
+<span class="sdot" id="sdot2"></span>
+<span class="stxt" id="stxt2" style="font-size:11px;color:#7a8aaa;">Loading…</span>
 </div>
-
 <script>
 const SHEET_ID='1iz1a_uA9n5d_psauCN0IC_4oc6KiQ-RR';
 const PLAYERS=['George','Jon','Matt','Proudy','Steve','Tyler'];
@@ -186,31 +177,19 @@ const STAT_NAMES=['George','Jon','Mattie','Proudy','Steve','Tyler'];
 // To update each week: replace selections below with new betslip data
 // Set hasResults:true once the weekend is over and sheet is updated
 const THIS_WEEKEND={
-  weekLabel:'Weekend 10 — Sun 17 May 2026',
+  weekLabel:'Weekend 11 — Sat 24 / Sun 25 May 2026',
   hasResults:false,
-  saturday:[],
-  sunday:[
-    {horse:'Shaftesbury Avenue', time:'13:56',track:'Naas',     race:'Race 1',odds:'2.37', punter:'Proudy'},
-    {horse:'Rupert The Prince',  time:'14:17',track:'Ripon',    race:'Race 1',odds:'5.50', punter:'George'},
-    {horse:'Star Prospect',      time:'14:56',track:'Naas',     race:'Race 3',odds:'1.80', punter:'Matt'},
-    {horse:'Cawthorne Cracker',  time:'15:05',track:'Stratford',race:'Race 2',odds:'3.75', punter:'George'},
-    {horse:'Solana Beach',       time:'15:26',track:'Naas',     race:'Race 4',odds:'3.75', punter:'Matt'},
-    {horse:'Solana Beach',       time:'15:26',track:'Naas',     race:'Race 4',odds:'3.75', punter:'Steve'},
-    {horse:"Jena D'oudairies",   time:'15:35',track:'Stratford',race:'Race 3',odds:'2.37', punter:'Proudy'},
-    {horse:'Space Bear',         time:'15:50',track:'Ripon',    race:'Race 4',odds:'5.50', punter:'George'},
-    {horse:'Native Warrior',     time:'15:56',track:'Naas',     race:'Race 5',odds:'3.00', punter:'Matt'},
-    {horse:'King Cuan',          time:'15:56',track:'Naas',     race:'Race 5',odds:'6.00', punter:'Jon'},
-    {horse:'A Little Something', time:'16:05',track:'Stratford',race:'Race 4',odds:'1.90', punter:'Proudy'},
-    {horse:'Marcellinus',        time:'16:15',track:'Hamilton', race:'Race 2',odds:'4.50', punter:'George'},
-    {horse:'Gouken',             time:'16:15',track:'Hamilton', race:'Race 2',odds:'7.50', punter:'Steve'},
-    {horse:'Victorious',         time:'16:26',track:'Naas',     race:'Race 6',odds:'1.83', punter:'Matt'},
-    {horse:'Oilisa',             time:'16:50',track:'Ripon',    race:'Race 6',odds:'4.33', punter:'Steve'},
-    {horse:'Charles Darwin',     time:'16:56',track:'Naas',     race:'Race 7',odds:'1.83', punter:'Proudy'},
-    {horse:'Havana Anna',        time:'16:56',track:'Naas',     race:'Race 7',odds:'4.33', punter:'Jon'},
-    {horse:'Alpha Magic',        time:'17:15',track:'Hamilton', race:'Race 4',odds:'12.00',punter:'Jon'},
-    {horse:'Jordan Electrics',   time:'17:15',track:'Hamilton', race:'Race 4',odds:'4.33', punter:'Steve'},
-    {horse:'Lady Iman',          time:'17:26',track:'Naas',     race:'Race 8',odds:'6.50', punter:'Jon'},
-  ]
+  saturday:[
+    {horse:'Jonny Concrete', time:'13:30', track:'York',     race:'Race 1', odds:'5.50', punter:'George'},
+    {horse:'Pathein',        time:'13:25', track:'Goodwood', race:'Race 1', odds:'7.50', punter:'Jon'},
+    {horse:'Laureate Crown', time:'14:20', track:'Haydock',  race:'Race 2', odds:'5.50', punter:'Jon'},
+    {horse:'Montassib',      time:'15:05', track:'Curragh',  race:'Race 4', odds:'5.50', punter:'George'},
+    {horse:'Inis Mor',       time:'15:10', track:'Goodwood', race:'Race 4', odds:'5.50', punter:'George'},
+    {horse:'Night Raider',   time:'15:30', track:'Haydock',  race:'Race 4', odds:'4.50', punter:'George'},
+    {horse:'American Affair',time:'15:30', track:'Haydock',  race:'Race 4', odds:'8.50', punter:'Jon'},
+    {horse:'Hermetic',       time:'16:05', track:'Haydock',  race:'Race 5', odds:'6.00', punter:'Jon'},
+  ],
+  sunday:[]
 };
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
@@ -223,13 +202,12 @@ function switchTab(tab,btn){document.querySelectorAll('.tab-content').forEach(t=
 // ── RENDER THIS WEEKEND ──────────────────────────────────────────────────
 function renderThisWeekend(){
   const tw=THIS_WEEKEND;
-
   function raceList(sels,dayLabel,dateStr){
     if(!sels||!sels.length)return '';
     const sorted=[...sels].sort((a,b)=>a.time.localeCompare(b.time));
     let h=`<div class="day-header"><div class="day-label">${dayLabel}</div><div class="day-line"></div><div class="day-date">${dateStr}</div></div>
-    <div class="race-list-card">
-      <div class="race-list-header"><span>Time</span><span>Horse</span><span>Track</span><span style="text-align:center">Odds</span><span>Punter</span><span style="text-align:center">Result</span></div>`;
+<div class="race-list-card">
+<div class="race-list-header"><span>Time</span><span>Horse</span><span>Track</span><span style="text-align:center">Odds</span><span>Punter</span><span style="text-align:center">Result</span></div>`;
     sorted.forEach((s,idx)=>{
       const col=pcolor(s.punter);
       const key=dayLabel+'_'+idx;
@@ -239,30 +217,28 @@ function renderThisWeekend(){
       const lb=saved==='L'?'result-btn active-l':'result-btn';
       const nrb=saved==='NR'?'result-btn active-nr':'result-btn';
       h+=`<div class="race-list-row" id="row-${key}">
-        <div><div class="rl-time">${s.time}</div><div class="rl-race">${s.race}</div></div>
-        <div class="rl-horse">${s.horse}</div>
-        <div class="rl-track">${s.track}</div>
-        <div class="rl-odds">${s.odds}</div>
-        <div><span class="punter-chip" style="background:${col}18;color:${col};border:1px solid ${col}40">${s.punter}</span></div>
-        <div class="result-btns">
-          <button class="${wb}" onclick="setResult('${key}','W')">W</button>
-          <button class="${pb}" onclick="setResult('${key}','P')">P</button>
-          <button class="${lb}" onclick="setResult('${key}','L')">L</button>
-          <button class="${nrb}" onclick="setResult('${key}','NR')">NR</button>
-        </div>
-      </div>`;
+<div><div class="rl-time">${s.time}</div><div class="rl-race">${s.race}</div></div>
+<div class="rl-horse">${s.horse}</div>
+<div class="rl-track">${s.track}</div>
+<div class="rl-odds">${s.odds}</div>
+<div><span class="punter-chip" style="background:${col}18;color:${col};border:1px solid ${col}40">${s.punter}</span></div>
+<div class="result-btns">
+<button class="${wb}" onclick="setResult('${key}','W')">W</button>
+<button class="${pb}" onclick="setResult('${key}','P')">P</button>
+<button class="${lb}" onclick="setResult('${key}','L')">L</button>
+<button class="${nrb}" onclick="setResult('${key}','NR')">NR</button>
+</div>
+</div>`;
     });
     return h+'</div>';
   }
-
   const statusBadge=tw.hasResults
     ?'<span style="background:#d4edda;color:#155724;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;padding:3px 10px;border-radius:3px;">RESULTS IN</span>'
     :'<span style="background:#fff3cd;color:#856404;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;padding:3px 10px;border-radius:3px;">PENDING</span>';
-
   let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:8px;">
-    <div class="sectitle" style="margin:0;border:none;padding:0;">${tw.weekLabel}</div>${statusBadge}</div>`;
-  html+=raceList(tw.saturday,'Saturday','Sat 16 May');
-  html+=raceList(tw.sunday,'Sunday','Sun 17 May');
+<div class="sectitle" style="margin:0;border:none;padding:0;">${tw.weekLabel}</div>${statusBadge}</div>`;
+  html+=raceList(tw.saturday,'Saturday','Sat 24 May');
+  html+=raceList(tw.sunday,'Sunday','Sun 25 May');
   document.getElementById('tab-thisweekend').innerHTML=html;
 }
 
@@ -274,13 +250,13 @@ function renderOverview(d){
   const totalBets=(d.betsCount||0)+(d.betsLeft||0)||106;
   const pct=Math.min(100,Math.round(((d.betsCount||d.bets.length)/totalBets)*100));
   let html=`<div class="sgrid">
-    <div class="sc"><div class="sl">Season Pot</div><div class="sv">${fmt(pot)}</div></div>
-    <div class="sc"><div class="sl">Bets Placed</div><div class="sv">${d.betsCount||d.bets.length}</div><div class="ss">${pct}% of ${(d.betsCount||0)+(d.betsLeft||0)||106} bets</div></div>
-    <div class="sc"><div class="sl">Season P/L</div><div class="sv ${d.profitTotal>=0?'green':'red'}">${fmt(d.profitTotal,true)}</div></div>
-    <div class="sc"><div class="sl">Predicted Total</div><div class="sv">${d.predicted?fmt(d.predicted):'–'}</div></div>
-  </div>
-  <div class="sectitle">This Season — 2026/27</div>
-  <div class="lb"><div class="lbh"><span></span><span>Player</span><span style="text-align:right">Returned</span><span style="text-align:right">P/L</span><span style="text-align:center">Wins</span><span style="text-align:center">£0</span></div>`;
+<div class="sc"><div class="sl">Season Pot</div><div class="sv">${fmt(pot)}</div></div>
+<div class="sc"><div class="sl">Bets Placed</div><div class="sv">${d.betsCount||d.bets.length}</div><div class="ss">${pct}% of ${(d.betsCount||0)+(d.betsLeft||0)||106} bets</div></div>
+<div class="sc"><div class="sl">Season P/L</div><div class="sv ${d.profitTotal>=0?'green':'red'}">${fmt(d.profitTotal,true)}</div></div>
+<div class="sc"><div class="sl">Predicted Total</div><div class="sv">${d.predicted?fmt(d.predicted):'–'}</div></div>
+</div>
+<div class="sectitle">This Season — 2026/27</div>
+<div class="lb"><div class="lbh"><span></span><span>Player</span><span style="text-align:right">Returned</span><span style="text-align:right">P/L</span><span style="text-align:center">Wins</span><span style="text-align:center">£0</span></div>`;
   lbData.forEach((p,i)=>{
     const pc2=i===0?'p1':i===1?'p2':i===2?'p3':'po';
     const pct=Math.round((p.returns/maxRet)*100);
@@ -327,12 +303,8 @@ function renderProjection(d){
   const projTotal=d.predicted||(d.totalReturned+avg*left);
   const perPerson=projTotal/6;
   const pct=Math.min(100,Math.round((played/total)*100));
-
-  // Weekends = bets / 2
   const totalWeekends=Math.round(total/2);
   const playedWeekends=d.weekends.length;
-
-  // Build cumulative actual returns per weekend
   const actualPadded=Array(totalWeekends+1).fill(null);
   actualPadded[0]=0;
   let running=0;
@@ -343,41 +315,34 @@ function renderProjection(d){
   });
   const lastActual=running;
   const lastWeek=playedWeekends;
-
-  // Projected line: starts at current actual value and extends to projTotal
-  // Only draws from current week to end of season
   const projData=Array(totalWeekends+1).fill(null);
   const remainingWeekends=totalWeekends-lastWeek;
   for(let w=lastWeek;w<=totalWeekends;w++){
     const frac=(w-lastWeek)/Math.max(remainingWeekends,1);
     projData[w]=parseFloat((lastActual+(projTotal-lastActual)*frac).toFixed(2));
   }
-
   const labels=Array.from({length:totalWeekends+1},(_,i)=>`Wk ${i}`);
-
   let html=`<div class="sgrid" style="grid-template-columns:repeat(3,1fr);">
-    <div class="sc"><div class="sl">Bets Remaining</div><div class="sv">${left}</div><div class="ss">of ${total} this season</div></div>
-    <div class="sc"><div class="sl">Projected Total</div><div class="sv">${fmt(projTotal)}</div></div>
-    <div class="sc"><div class="sl">Per Person</div><div class="sv green">${fmt(perPerson)}</div><div class="ss">for Cheltenham</div></div>
-  </div>
-  <div class="sectitle">Season Progress</div>
-  <div class="card" style="margin-bottom:16px;">
-    <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="font-size:12px;color:#1a2236;font-weight:600;">Bets completed</span><span style="font-size:12px;color:#1a2236;font-weight:600;">${played} / ${total}</span></div>
-    <div style="background:#f0ece6;border-radius:4px;height:8px;overflow:hidden;margin-bottom:4px;"><div style="height:100%;width:${pct}%;background:#1a2236;border-radius:4px;"></div></div>
-    <div style="font-size:10px;color:#6a7a8a;text-align:right;">${pct}% of season complete</div>
-  </div>
-  <div class="sectitle">Total Returns — Actual vs Projected</div>
-  <div class="card">
-    <div class="chart-legend">
-      <div class="legend-item"><div style="width:24px;height:3px;background:#1a2236;border-radius:2px;flex-shrink:0;"></div>Actual returns</div>
-      <div class="legend-item"><div style="width:24px;height:3px;flex-shrink:0;background:repeating-linear-gradient(90deg,#c0392b 0,#c0392b 5px,transparent 5px,transparent 9px);"></div>Projected to end of season</div>
-    </div>
-    <div style="position:relative;width:100%;height:300px;"><canvas id="projChart"></canvas></div>
-    <div style="margin-top:12px;font-size:11px;color:#6a7a8a;">Projected line starts from current returns and extends to predicted season total.</div>
-  </div>`;
-
+<div class="sc"><div class="sl">Bets Remaining</div><div class="sv">${left}</div><div class="ss">of ${total} this season</div></div>
+<div class="sc"><div class="sl">Projected Total</div><div class="sv">${fmt(projTotal)}</div></div>
+<div class="sc"><div class="sl">Per Person</div><div class="sv green">${fmt(perPerson)}</div><div class="ss">for Cheltenham</div></div>
+</div>
+<div class="sectitle">Season Progress</div>
+<div class="card" style="margin-bottom:16px;">
+<div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="font-size:12px;color:#1a2236;font-weight:600;">Bets completed</span><span style="font-size:12px;color:#1a2236;font-weight:600;">${played} / ${total}</span></div>
+<div style="background:#f0ece6;border-radius:4px;height:8px;overflow:hidden;margin-bottom:4px;"><div style="height:100%;width:${pct}%;background:#1a2236;border-radius:4px;"></div></div>
+<div style="font-size:10px;color:#6a7a8a;text-align:right;">${pct}% of season complete</div>
+</div>
+<div class="sectitle">Total Returns — Actual vs Projected</div>
+<div class="card">
+<div class="chart-legend">
+<div class="legend-item"><div style="width:24px;height:3px;background:#1a2236;border-radius:2px;flex-shrink:0;"></div>Actual returns</div>
+<div class="legend-item"><div style="width:24px;height:3px;flex-shrink:0;background:repeating-linear-gradient(90deg,#c0392b 0,#c0392b 5px,transparent 5px,transparent 9px);"></div>Projected to end of season</div>
+</div>
+<div style="position:relative;width:100%;height:300px;"><canvas id="projChart"></canvas></div>
+<div style="margin-top:12px;font-size:11px;color:#6a7a8a;">Projected line starts from current returns and extends to predicted season total.</div>
+</div>`;
   document.getElementById('tab-projection').innerHTML=html;
-
   if(projChart){projChart.destroy();projChart=null;}
   projChart=new Chart(document.getElementById('projChart'),{
     type:'line',
@@ -422,7 +387,6 @@ function renderProjection(d){
   });
 }
 
-
 const WORKER_URL='https://misty-sea-0fdb.georgecharlesworth5.workers.dev';
 let sharedResults={};
 
@@ -436,11 +400,9 @@ async function loadResults(){
 async function setResult(key,result){
   const current=sharedResults[key]||'';
   const newResult=current===result?'':result;
-  // Optimistic update
   if(newResult==='') delete sharedResults[key];
   else sharedResults[key]=newResult;
   renderThisWeekend();
-  // Save to KV
   try{
     await fetch(WORKER_URL,{
       method:'POST',
@@ -464,63 +426,35 @@ function processJSON(t){
   const c=t.replace(/^[^\{]+/,'').replace(/\);\s*$/,'');
   const o=JSON.parse(c);
   const rows=o.table.rows.map(r=>r.c.map(c=>c?c.v:null));
-
-  // Exact column mapping from raw data inspection:
-  // col 1 (B) = player names / labels
-  // col 2 (C) = numeric values
-  // col 3 (D) = profitable bets (numeric)
-  // col 4 (E) = zeros count (string like "3") OR secondary labels
-  // col 5 (F) = secondary numeric values
-  // col 8 (I) = bet number
-  // col 9 (J)=George, 10(K)=Jon, 11(L)=Matt, 12(M)=Proudy, 13(N)=Steve, 14(O)=Tyler
-  // col 15 (P) = profit per bet, col 16 (Q) = lucky63
-
   const bets=[], ps={};
   let totalReturned=0, profitTotal=0, predicted=0, betsCount=0, betsLeft=0, bet365Total=0, withdrawals=0;
-
   for(let i=0;i<rows.length;i++){
     const r=rows[i];
     const g =v=>{const x=r[v];return x===null||x===undefined?'':String(x).trim();};
     const gn=v=>pc(r[v]);
-
-    const b1=g(1); // col B
-    const n2=gn(2); // col C numeric
-    const n3=gn(3); // col D numeric
-    const e4=g(4);  // col E string
-    const n5=gn(5); // col F numeric
-
-    // Season player stats: col B=name, col C=returns(0-5000), col D=profitable(integer), col E=zeros(string integer)
-    // e.g. "George", 158.33, 5, "3"
+    const b1=g(1);
+    const n2=gn(2);
+    const n3=gn(3);
+    const e4=g(4);
+    const n5=gn(5);
     if(STAT_NAMES.includes(b1) && n2 > 0 && n2 < 2000 && r[3]!==null && !isNaN(n3) && n3 < 50 && /^\d+$/.test(e4)){
       ps[b1]={returns:n2, profitable:Math.round(n3), zeros:parseInt(e4)||0};
     }
-
-    // Summary stats: col B=label, col C=value
     if(b1==='Total' && n2 > 0 && n2 < 10000) totalReturned=n2;
     if(b1==='Profit') profitTotal=n2;
-
-    // Secondary stats: col E=label, col F=value
     if(e4==='Bets' && n5 > 0) betsCount=Math.round(n5);
     if(e4==='Bets Left' && n5 > 0) betsLeft=Math.round(n5);
     if(e4==='Joint Bets' && n5 > 0) bet365Total=n5;
-
-    // Bet365 balance: col B="Bet365", next row has: col C=withdrawals, col D=total
     if(b1==='Bet365'){
       const nr=rows[i+1]||[];
       withdrawals=pc(nr[2]);
       bet365Total=pc(nr[3]);
     }
-
-    // Predicted total: row where col B = "£7,470.55" style string (the predicted pot total)
-    // In the raw data this row has: col B=predicted string, col C=current each, col D=current each value
-    // The total predicted is in col B itself as a formatted string
     if(b1.startsWith('£') && b1.includes(',') && !b1.includes('1,312') && !b1.includes('1,491')){
       const stripped=b1.replace(/[£,]/g,'');
       const parsed=parseFloat(stripped);
       if(parsed > 5000 && parsed < 20000) predicted=parsed;
     }
-
-    // Bet rows: col I (index 8) = bet number, only rows with actual player data
     const betNum=r[8];
     if(typeof betNum==='number' && betNum>0 && betNum<=106){
       const hasData=r[9]!==null || r[10]!==null || r[11]!==null || r[12]!==null || r[13]!==null || r[14]!==null;
@@ -534,10 +468,7 @@ function processJSON(t){
       }
     }
   }
-
-  // Fallback: derive betsCount from actual bets found
   if(!betsCount && bets.length) betsCount=bets.length;
-
   return buildData(bets,ps,{totalReturned,profitTotal,predicted,betsCount,betsLeft,bet365Total,withdrawals});
 }
 
@@ -546,7 +477,9 @@ function buildData(bets,playerStats,stats){
   const weekends=[];for(let i=0;i<bets.length;i+=2)weekends.push({num:Math.ceil((i+1)/2),sat:bets[i]||null,sun:bets[i+1]||null});
   return{bets,playerStats,allReturns,weekends,...stats};
 }
+
 function parseCSV(t){const rows=[];for(const l of t.split('\n')){const c=[];let cur='',q=false;for(const ch of l){if(ch==='"'){q=!q;}else if(ch===','&&!q){c.push(cur.trim());cur='';}else cur+=ch;}c.push(cur.trim());rows.push(c);}return rows;}
+
 function processCSV(rows){
   const bets=[],ps={};let tr=0,pr=0,pd=0,bc=0,bl=0,b3=0,wd=0;
   for(let i=0;i<rows.length;i++){const r=rows[i];const b=v=>(r[v]||'').trim();
@@ -559,6 +492,7 @@ function processCSV(rows){
   }
   return buildData(bets,ps,{totalReturned:tr,profitTotal:pr,predicted:pd,betsCount:bc,betsLeft:bl,bet365Total:b3,withdrawals:wd});
 }
+
 async function loadSheet(){
   setStatus(true,'Connecting…');
   const WORKER_URL='https://misty-sea-0fdb.georgecharlesworth5.workers.dev';
@@ -577,6 +511,7 @@ async function loadSheet(){
   setStatus(false,'Could not connect — showing demo data');
   await useDemoData();
 }
+
 async function useDemoData(){
   const ps={George:{returns:158.33,profitable:5,zeros:3},Jon:{returns:336.72,profitable:4,zeros:4},Mattie:{returns:233.54,profitable:3,zeros:2},Proudy:{returns:207.93,profitable:1,zeros:0},Steve:{returns:328.63,profitable:5,zeros:0},Tyler:{returns:245.50,profitable:1,zeros:1}};
   const rb=[{bet:1,George:0,Jon:1.40,Matt:0,Proudy:3.00,Steve:19.96,Tyler:3.00,profit:-62.64,lucky63:0.88},{bet:2,George:2.80,Jon:2.90,Matt:41.75,Proudy:15.00,Steve:1.91,Tyler:15.00,profit:-10.64,lucky63:0},{bet:3,George:0,Jon:7.60,Matt:0,Proudy:15.00,Steve:15.16,Tyler:15.00,profit:-37.24,lucky63:37.12},{bet:4,George:6.50,Jon:0,Matt:16.22,Proudy:16.22,Steve:0.95,Tyler:6.50,profit:-43.61,lucky63:0},{bet:5,George:25.11,Jon:5.59,Matt:4.75,Proudy:15.00,Steve:16.88,Tyler:15.00,profit:-7.67,lucky63:12.50},{bet:6,George:5.00,Jon:43.20,Matt:4.75,Proudy:15.00,Steve:12.46,Tyler:15.00,profit:5.41,lucky63:0},{bet:7,George:2.82,Jon:0,Matt:1.15,Proudy:7.68,Steve:4.15,Tyler:15.00,profit:-59.20,lucky63:4.14},{bet:8,George:25.60,Jon:0,Matt:7.67,Proudy:8.45,Steve:4.85,Tyler:15.00,profit:-28.43,lucky63:0},{bet:9,George:23.40,Jon:0,Matt:1.00,Proudy:15.00,Steve:2.84,Tyler:0,profit:-47.76,lucky63:10.25},{bet:10,George:15.84,Jon:8.70,Matt:5.50,Proudy:9.88,Steve:12.28,Tyler:15.00,profit:-22.80,lucky63:0},{bet:11,George:2.55,Jon:3.10,Matt:9.22,Proudy:15.00,Steve:7.78,Tyler:15.00,profit:-37.35,lucky63:29.58},{bet:12,George:0,Jon:1.10,Matt:9.96,Proudy:15.00,Steve:3.98,Tyler:15.00,profit:-44.96,lucky63:0},{bet:13,George:7.74,Jon:0.90,Matt:6.50,Proudy:8.80,Steve:64.12,Tyler:15.00,profit:13.06,lucky63:13.03},{bet:14,George:0.94,Jon:88.52,Matt:50.47,Proudy:4.50,Steve:7.74,Tyler:9.00,profit:71.17,lucky63:0},{bet:15,George:19.85,Jon:27.93,Matt:3.00,Proudy:3.00,Steve:36.29,Tyler:17.00,profit:17.07,lucky63:9.68},{bet:16,George:11.30,Jon:72.20,Matt:3.75,Proudy:6.20,Steve:0.95,Tyler:15.00,profit:19.40,lucky63:0},{bet:17,George:4.00,Jon:21.28,Matt:5.40,Proudy:15.00,Steve:0.95,Tyler:15.00,profit:-28.37,lucky63:3.67},{bet:18,George:0.84,Jon:46.91,Matt:57.44,Proudy:15.00,Steve:66.85,Tyler:15.00,profit:112.04,lucky63:0},{bet:19,George:4.04,Jon:5.39,Matt:5.01,Proudy:5.20,Steve:48.53,Tyler:15.00,profit:-6.83,lucky63:0}];
