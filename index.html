@@ -179,33 +179,29 @@ const STAT_NAMES=['George','Jon','Mattie','Proudy','Steve','Tyler'];
 const THIS_WEEKEND={
   weekLabel:'Weekend 13 — Sat 13 Jun 2026',
   hasResults:false,
-  saturday:[
-    {horse:'Malangen',         time:'13:42', track:'Hexham',  race:'Race 1', odds:'2.75',  punter:'Tyler'},
-    {horse:'Chillingham',      time:'13:50', track:'York',    race:'Race 1', odds:'6.50',  punter:'Jon'},
-    {horse:'Proud Nation',     time:'14:10', track:'Chester', race:'Race 2', odds:'10.00', punter:'Steve'},
-    {horse:'Aalto',            time:'14:25', track:'York',    race:'Race 2', odds:'6.00',  punter:'Jon'},
-    {horse:'Lady Youmzain',    time:'14:42', track:'Sandown', race:'Race 3', odds:'7.00',  punter:'Jon'},
-    {horse:'Tabletalk',        time:'15:00', track:'York',    race:'Race 3', odds:'11.00', punter:'Steve'},
-    {horse:'Velvet Goldmine',  time:'15:05', track:'Bath',    race:'Race 4', odds:'2.62',  punter:'Tyler'},
-    {horse:'High Degree',      time:'15:17', track:'Sandown', race:'Race 4', odds:'3.25',  punter:'George'},
-    {horse:'Chicago Pope',     time:'15:35', track:'York',    race:'Race 4', odds:'9.00',  punter:'Jon'},
-    {horse:'Fortification',    time:'15:35', track:'York',    race:'Race 4', odds:'12.00', punter:'George'},
-    {horse:'Red Spells Danger',time:'15:35', track:'York',    race:'Race 4', odds:'6.00',  punter:'Steve'},
-    {horse:'Thunder Call',     time:'15:35', track:'York',    race:'Race 4', odds:'4.50',  punter:'Matt'},
-    {horse:'Perseus Way',      time:'15:40', track:'Hexham',  race:'Race 4', odds:'2.75',  punter:'Tyler'},
-    {horse:'Spirit Of Saxony', time:'15:55', track:'Sandown', race:'Race 5', odds:'5.50',  punter:'Matt'},
-    {horse:'Tricky Tel',       time:'16:00', track:'Chester', race:'Race 5', odds:'5.00',  punter:'Matt'},
-    {horse:'Point Of Contact', time:'16:50', track:'York',    race:'Race 6', odds:'2.87',  punter:'George'},
-    {horse:'Thapa VC',         time:'17:02', track:'Bath',    race:'Race 7', odds:'3.00',  punter:'Steve'},
-    {horse:'Thapa VC',         time:'17:02', track:'Bath',    race:'Race 7', odds:'3.00',  punter:'Tyler'},
-    {horse:'Winged Messenger', time:'17:25', track:'York',    race:'Race 7', odds:'9.50',  punter:'George'},
-    {horse:'Winged Messenger', time:'17:25', track:'York',    race:'Race 7', odds:'11.00', punter:'Matt'},
-    {horse:'Swiped',           time:'16:27', track:'Bath',    race:'Race 6', odds:'2.75',  punter:'Proudy'},
-    {horse:'Humphrey',         time:'16:32', track:'Sandown', race:'Race 6', odds:'1.83',  punter:'Proudy'},
-    {horse:'Malangen',         time:'13:42', track:'Hexham',  race:'Race 1', odds:'2.75',  punter:'Proudy'},
-    {horse:'Ghasham',          time:'14:55', track:'Hexham',  race:'Race 3', odds:'1.62',  punter:'Proudy'},
-  ],
-  sunday:[]
+  saturday:[],
+  sunday:[
+    {horse:'New Bond Street',  time:'14:07', track:'Cork',      race:'Race 1', odds:'2.00',  punter:'Proudy'},
+    {horse:'Collecting Coin',  time:'14:37', track:'Cork',      race:'Race 2', odds:'8.50',  punter:'Jon'},
+    {horse:'Enchant',          time:'14:30', track:'Doncaster', race:'Race 2', odds:'5.00',  punter:'George'},
+    {horse:'Blue Prince',      time:'14:44', track:'Salisbury', race:'Race 2', odds:'2.62',  punter:'Proudy'},
+    {horse:'Nochebuena',       time:'15:00', track:'Doncaster', race:'Race 3', odds:'1.83',  punter:'Proudy'},
+    {horse:'Nochebuena',       time:'15:00', track:'Doncaster', race:'Race 3', odds:'1.83',  punter:'Matt'},
+    {horse:'Evolutionist',     time:'15:05', track:'Chantilly', race:'Race 5', odds:'9.00',  punter:'Jon'},
+    {horse:'Weekend Roar',     time:'15:14', track:'Salisbury', race:'Race 3', odds:'5.50',  punter:'Steve'},
+    {horse:'Rousham',          time:'15:30', track:'Doncaster', race:'Race 4', odds:'4.50',  punter:'Steve'},
+    {horse:'Brunhilde',        time:'15:47', track:'Salisbury', race:'Race 4', odds:'2.75',  punter:'Matt'},
+    {horse:'Beale Street',     time:'16:05', track:'Doncaster', race:'Race 5', odds:'11.00', punter:'George'},
+    {horse:'Beale Street',     time:'16:05', track:'Doncaster', race:'Race 5', odds:'11.00', punter:'Steve'},
+    {horse:'Magic Boy',        time:'16:05', track:'Doncaster', race:'Race 5', odds:'6.50',  punter:'Proudy'},
+    {horse:'Wrydcroft',        time:'16:05', track:'Doncaster', race:'Race 5', odds:'3.50',  punter:'Matt'},
+    {horse:'Primo Lara',       time:'16:22', track:'Salisbury', race:'Race 5', odds:'4.50',  punter:'Steve'},
+    {horse:'Eretria',          time:'16:48', track:'Cork',      race:'Race 6', odds:'7.50',  punter:'Jon'},
+    {horse:'Eutropia',         time:'16:57', track:'Salisbury', race:'Race 6', odds:'5.00',  punter:'George'},
+    {horse:'Kamaway',          time:'16:57', track:'Salisbury', race:'Race 6', odds:'2.75',  punter:'Matt'},
+    {horse:'Onemorenomore',    time:'17:15', track:'Doncaster', race:'Race 7', odds:'10.00', punter:'Jon'},
+    {horse:'Woodleigh',        time:'17:15', track:'Doncaster', race:'Race 7', odds:'6.50',  punter:'George'},
+  ]
 };
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
@@ -253,8 +249,8 @@ function renderThisWeekend(){
     :'<span style="background:#fff3cd;color:#856404;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;padding:3px 10px;border-radius:3px;">PENDING</span>';
   let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:8px;">
 <div class="sectitle" style="margin:0;border:none;padding:0;">${tw.weekLabel}</div>${statusBadge}</div>`;
-  html+=raceList(tw.saturday,'Saturday','Sat 13 June');
-  html+=raceList(tw.sunday,'Sunday','Sun 14 June');
+  html+=raceList(tw.saturday,'Saturday','Sat 24 May');
+  html+=raceList(tw.sunday,'Sunday','Sun 25 May');
   document.getElementById('tab-thisweekend').innerHTML=html;
 }
 
