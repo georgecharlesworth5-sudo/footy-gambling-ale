@@ -37,6 +37,10 @@ body{background:#f4f1ec;color:#1a2236;font-family:'Barlow',sans-serif;}
 .lbh{display:grid;grid-template-columns:32px 1fr 100px 90px 54px 54px;gap:8px;padding:10px 16px;background:#f9f8f5;border-bottom:1px solid #e8e4dd;font-size:10px;color:#1a2236;letter-spacing:1px;text-transform:uppercase;font-weight:700;}
 .lbr{display:grid;grid-template-columns:32px 1fr 100px 90px 54px 54px;gap:8px;align-items:center;padding:14px 16px;border-bottom:1px solid #f0ece6;transition:background 0.1s;}
 .lbr:last-child{border-bottom:none;}.lbr:hover{background:#faf9f6;}
+.stl{display:grid;grid-template-columns:1fr 80px 54px 64px 90px;gap:8px;align-items:center;padding:14px 16px;border-bottom:1px solid #f0ece6;}
+.stl:last-child{border-bottom:none;}
+.stlh{padding:10px 16px;background:#f9f8f5;font-size:10px;color:#1a2236;letter-spacing:1px;text-transform:uppercase;font-weight:700;}
+.stlh span:not(:first-child):not(:last-child){text-align:center;}
 .pos{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .p1{background:#1a2236;color:#fff;}.p2{background:#4a5a7a;color:#fff;}.p3{background:#8a9ab8;color:#fff;}.po{background:#f0ece6;color:#6a7a8a;font-size:12px;}
 .pname{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:#1a2236;}
@@ -116,6 +120,8 @@ body{background:#f4f1ec;color:#1a2236;font-family:'Barlow',sans-serif;}
 .htitle{font-size:17px;}
 .lbh,.lbr{grid-template-columns:26px 1fr 85px 72px;}
 .lbh>*:nth-child(5),.lbh>*:nth-child(6),.lbr>*:nth-child(5),.lbr>*:nth-child(6){display:none;}
+.stl{grid-template-columns:1fr 62px 36px 50px 72px;gap:6px;padding:12px;}
+.stlh{padding:10px 12px;font-size:9px;letter-spacing:0.5px;}
 .wgrid{grid-template-columns:repeat(3,1fr);}
 .sgrid{grid-template-columns:repeat(2,1fr);}
 .l15-grid{grid-template-columns:1fr;}
@@ -281,6 +287,24 @@ function renderOverview(d){
     html+=`<div class="lbr"><div class="pos ${pc2}">${i+1}</div><div><div class="pname">${p.name}</div><div class="bw"><div class="bf" style="width:${pct}%;background:${pcolor(p.name)}"></div></div></div><div class="rv" style="color:${pcolor(p.name)}">${fmt(p.returns)}</div><div class="pv" style="color:${plC}">${fmt(pl,true)}</div><div class="cv">${p.profitable}</div><div class="cv">${p.zeros}</div></div>`;
   });
   html+='</div>';
+  // ── PLAYER STATS TABLE (calculated from bet-by-bet returns) ──
+  const EPS=0.005;
+  const st=PLAYERS.map(p=>{
+    const vals=d.bets.map(b=>b[p]);
+    return{
+      name:p==='Matt'?'Mattie':p,key:p,
+      profitable:vals.filter(v=>v>15+EPS).length,
+      zeros:vals.filter(v=>Math.abs(v)<EPS).length,
+      noBets:vals.filter(v=>Math.abs(v-15)<EPS).length,
+      best:vals.length?Math.max(...vals):0
+    };
+  }).sort((a,b)=>b.best-a.best);
+  html+=`<div class="sectitle">Player Stats</div>
+<div class="lb"><div class="stl stlh"><span>Player</span><span>Profitable</span><span>£0</span><span>No Bet</span><span style="text-align:right">Best Bet</span></div>`;
+  st.forEach(p=>{
+    html+=`<div class="stl"><div class="pname" style="color:${pcolor(p.key)}">${p.name}</div><div class="cv">${p.profitable}</div><div class="cv">${p.zeros}</div><div class="cv">${p.noBets}</div><div class="rv" style="color:${pcolor(p.key)}">${fmt(p.best)}</div></div>`;
+  });
+  html+=`</div><div style="font-size:11px;color:#6a7a8a;margin:-16px 0 24px;">Profitable = returned over £15 · £0 = returned nothing · No Bet = returned exactly £15 · Best Bet = highest single return</div>`;
   document.getElementById('tab-overview').innerHTML=html;
 }
 
